@@ -1,3 +1,4 @@
+/// <reference types="google.maps" />
 let loaderPromise: Promise<typeof google.maps> | undefined;
 
 const CALLBACK_NAME = "__pairPathMapsReady";
