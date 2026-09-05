@@ -249,11 +249,11 @@ textarea.field-input {
 }
 .hero-copy h1,
 .flow-header h1 {
-  letter-spacing: -0.075em;
+  letter-spacing: -0.03em;
   margin: 24px 0 20px;
-  font-size: clamp(44px, 6.5vw, 84px);
-  font-weight: 900;
-  line-height: 0.98;
+  font-size: clamp(38px, 6vw, 76px);
+  font-weight: 800;
+  line-height: 1.18;
 }
 .hero-copy h1 em,
 .flow-header h1 em {
@@ -1258,7 +1258,7 @@ label small,
     padding: 20px 3% 43px;
   }
   .hero-copy h1 {
-    font-size: 49px;
+    font-size: 38px;
   }
   .hero-lede {
     font-size: 15px;
@@ -2071,7 +2071,7 @@ label small,
   font-family: "Iansui";
   src: url("/fonts/Iansui-Regular.woff2") format("woff2");
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 400;
   font-display: swap;
   /* Chinese, kana and CJK punctuation only — Latin/digits stay on DM Sans */
   unicode-range: U+2E80-303F, U+3040-30FF, U+3190-319F, U+31C0-31EF, U+3200-4DBF,
@@ -2081,7 +2081,7 @@ label small,
   font-family: "IansuiAll";
   src: url("/fonts/Iansui-Regular.woff2") format("woff2");
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 400;
   font-display: swap;
 }
 .brand-word {
