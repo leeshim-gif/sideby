@@ -457,8 +457,23 @@ function Home() {
   const replaceStop = (stop: Stop) => {
     const replacement: Stop =
       stop.type === "展覽"
-        ? { ...stop, name: "雙人手作體驗", type: "雙人手作", meta: "90 分鐘 · NT$880", color: "lilac" }
-        : { ...stop, name: "河岸散步", type: "散步", meta: "35 分鐘 · 免費", color: "mint" };
+        ? {
+            ...stop,
+            name: "陶作坊 台北",
+            type: "雙人手作",
+            meta: "90 分鐘 · NT$880",
+            color: "lilac",
+            query: "陶作坊 台北",
+          }
+        : {
+            ...stop,
+            name: "大稻埕碼頭",
+            type: "散步",
+            meta: "35 分鐘 · 免費",
+            color: "mint",
+            query: "大稻埕碼頭 台北",
+          };
+
     setPlans((prev) =>
       prev.map((p) =>
         p.id !== selectedPlanId
