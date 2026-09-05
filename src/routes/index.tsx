@@ -519,29 +519,58 @@ function Home() {
 
 
 
-  const createRoom = () => {
-    setInviteCode(String(Math.floor(100000 + Math.random() * 899999)));
-    setPartnerJoined(false);
-    toast.success("房間已建立，邀請連結可以分享了");
-    go("shared");
+  const handleCreateRoom = async () => {
+    if (!user) {
+      toast.error("請先登入，才能建立你們的空間");
+      setAuthOpen(true);
+      return;
+    }
+    setCreating(true);
+    try {
+      const result = await callCreateRoom({ data: undefined });
+      setRoom(result.room);
+      toast.success("空間已建立，把邀請碼傳給另一半吧");
+    } catch {
+      toast.error("建立空間時發生問題，請再試一次");
+    } finally {
+      setCreating(false);
+    }
   };
 
   const copyInvite = async () => {
-    const origin = typeof window === "undefined" ? "" : window.location.origin;
-    await navigator.clipboard?.writeText(`${origin}/room/${inviteCode}`).catch(() => null);
-    toast.success("邀請連結已複製");
+    if (!room) return;
+    await navigator.clipboard?.writeText(room.inviteCode).catch(() => null);
+    toast.success("邀請碼已複製");
   };
 
-  const joinRoom = () => {
-    if (joinCode.length >= 4) {
-      setInviteCode(joinCode);
-      setPartnerJoined(true);
-      toast.success("已加入雙人房間");
-      go("shared");
-    } else {
-      toast.error("請輸入邀請碼");
+  const handleJoinRoom = async () => {
+    if (!user) {
+      toast.error("請先登入，才能加入另一半的空間");
+      setAuthOpen(true);
+      return;
+    }
+    if (joinCode.trim().length === 0) return;
+    setJoining(true);
+    try {
+      const result = await callJoinRoom({ data: { code: joinCode } });
+      if (result.ok) {
+        setRoom(result.room);
+        setJoinCode("");
+        toast.success("已加入你們共同的 SideBy 空間");
+        return;
+      }
+      if (result.reason === "full") toast.error("這個 SideBy 空間已經完成配對。");
+      else if (result.reason === "own_room") toast.error("這已經是你們的空間了，不需要再加入。");
+      else if (result.reason === "already_paired")
+        toast.error("你已經在一個 SideBy 空間裡了。");
+      else toast.error("找不到這個邀請碼，請確認後再試一次。");
+    } catch {
+      toast.error("加入時發生問題，請再試一次");
+    } finally {
+      setJoining(false);
     }
   };
+
 
   const submitPrivate = async () => {
     setGenerating(true);
