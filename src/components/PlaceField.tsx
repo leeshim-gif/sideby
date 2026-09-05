@@ -67,6 +67,7 @@ export function PlaceField({
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [query, setQuery] = useState(value);
+  const [picked, setPicked] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -87,6 +88,7 @@ export function PlaceField({
 
   const pick = async (s: PlaceSuggestion) => {
     setOpen(false);
+    setPicked(true);
     setSuggestions([]);
     setQuery(s.name);
     onChange(s.name);
@@ -113,11 +115,12 @@ export function PlaceField({
             setQuery(e.target.value);
             onChange(e.target.value);
             setOpen(true);
+            setPicked(false);
             onPick(null);
           }}
         />
       </div>
-      {open && place?.name !== query.trim() && (query.trim().length >= 2 || busy) && (
+      {open && !picked && (query.trim().length >= 2 || busy) && (
         <div className="place-suggestions">
           {busy && suggestions.length === 0 && <div className="place-empty">正在搜尋地點…</div>}
           {!busy && suggestions.length === 0 && <div className="place-empty">找不到相符的地點</div>}
