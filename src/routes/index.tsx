@@ -20,10 +20,16 @@ import {
   Star,
   TrainFront,
   Users,
+  X,
+  CalendarDays,
+
 } from "lucide-react";
 import { AuthSheet } from "@/components/AuthSheet";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { DateMap, type MapStop } from "@/components/DateMap";
+import { DateSheet, TimeSheet, formatDateLabel } from "@/components/DateSheet";
+import { PlaceField } from "@/components/PlaceField";
+
 import { useSession } from "@/lib/use-session";
 import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
 
@@ -298,9 +304,23 @@ function Home() {
   const [joinCode, setJoinCode] = useState("");
   const [partnerJoined, setPartnerJoined] = useState(false);
 
-  const [date, setDate] = useState("今天，6 月 18 日");
-  const [time, setTime] = useState("18:00 — 22:00");
-  const [location, setLocation] = useState("中山捷運站");
+  const todayISO = useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate(),
+    ).padStart(2, "0")}`;
+  }, []);
+  const [dateISO, setDateISO] = useState(todayISO);
+  const [startTime, setStartTime] = useState("18:00");
+  const [endTime, setEndTime] = useState("22:00");
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [timePicker, setTimePicker] = useState<"start" | "end" | null>(null);
+  const [leaveAsk, setLeaveAsk] = useState(false);
+  const [location, setLocation] = useState("");
+  const [meetPlace, setMeetPlace] = useState<Venue | null>(null);
+  const date = formatDateLabel(dateISO);
+  const time = `${startTime} — ${endTime}`;
+
   const [budget, setBudget] = useState("2200");
   const [mode, setMode] = useState<"now" | "future">("now");
   const [transport, setTransport] = useState<string[]>(["步行", "捷運"]);
@@ -422,6 +442,16 @@ function Home() {
 
   const go = (next: Screen) => setScreen(next);
 
+  const draftDirty = location.trim().length > 0 || meetPlace !== null;
+  const requestLeave = () => {
+    if (draftDirty) {
+      setLeaveAsk(true);
+      return;
+    }
+    go("room");
+  };
+
+
 
   const createRoom = () => {
     setInviteCode(String(Math.floor(100000 + Math.random() * 899999)));
@@ -530,6 +560,49 @@ function Home() {
         </div>
       </header>
       <AuthSheet open={authOpen} onClose={() => setAuthOpen(false)} />
+      <DateSheet
+        open={datePickerOpen}
+        value={dateISO}
+        onClose={() => setDatePickerOpen(false)}
+        onSelect={setDateISO}
+      />
+      <TimeSheet
+        open={timePicker !== null}
+        title={timePicker === "end" ? "預計結束" : "開始時間"}
+        value={timePicker === "end" ? endTime : startTime}
+        onClose={() => setTimePicker(null)}
+        onConfirm={(t) => {
+          if (timePicker === "end") setEndTime(t);
+          else {
+            setStartTime(t);
+            if (t > endTime && endTime > "06:00") setEndTime(t);
+          }
+          setTimePicker(null);
+        }}
+      />
+      {leaveAsk && (
+        <div className="picker-backdrop" role="dialog" aria-modal="true">
+          <button className="picker-scrim" aria-label="關閉" onClick={() => setLeaveAsk(false)} />
+          <div className="picker-sheet confirm-sheet">
+            <p>要離開嗎？尚未儲存的內容可能會遺失。</p>
+            <div className="confirm-actions">
+              <button className="btn btn-lilac" onClick={() => setLeaveAsk(false)}>
+                繼續編輯
+              </button>
+              <button
+                className="btn btn-black"
+                onClick={() => {
+                  setLeaveAsk(false);
+                  go("room");
+                }}
+              >
+                離開
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       <main className="page-wrap">
         <div className="progress-row">
@@ -618,6 +691,9 @@ function Home() {
 
         {screen === "shared" && (
           <section className="flow-section">
+            <button className="flow-close" aria-label="關閉建立新的約會" onClick={requestLeave}>
+              <X size={20} />
+            </button>
             <FlowHeader
               kicker="STEP 01 / TOGETHER"
               title="先決定你們的共同條件"
@@ -643,32 +719,33 @@ function Home() {
                 <div className="two-col">
                   <label>
                     <span>日期</span>
-                    <input
-                      className="field-input"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
+                    <button className="field-input picker-trigger" onClick={() => setDatePickerOpen(true)}>
+                      <CalendarDays size={16} /> {date}
+                    </button>
                   </label>
                   <label>
-                    <span>時間</span>
-                    <input
-                      className="field-input"
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                    />
+                    <span>開始時間</span>
+                    <button className="field-input picker-trigger" onClick={() => setTimePicker("start")}>
+                      <Clock size={16} /> {startTime}
+                    </button>
                   </label>
                 </div>
                 <label>
-                  <span>集合地點</span>
-                  <div className="input-icon">
-                    <MapPin size={17} />
-                    <input
-                      className="field-input"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                    />
-                  </div>
+                  <span>預計結束</span>
+                  <button className="field-input picker-trigger" onClick={() => setTimePicker("end")}>
+                    <Clock size={16} /> {endTime}
+                  </button>
                 </label>
+                <label>
+                  <span>集合地點</span>
+                  <PlaceField
+                    value={location}
+                    place={meetPlace}
+                    onChange={setLocation}
+                    onPick={setMeetPlace}
+                  />
+                </label>
+
                 <div className="budget-row">
                   <label>
                     <span>理想預算</span>

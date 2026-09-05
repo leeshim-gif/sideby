@@ -214,3 +214,93 @@ export const computeTravelLegs = createServerFn({ method: "POST" })
     }
     return { legs };
   });
+
+export type PlaceSuggestion = {
+  placeId: string;
+  name: string;
+  secondary: string;
+};
+
+export const autocompletePlaces = createServerFn({ method: "POST" })
+  .inputValidator((data) => z.object({ input: z.string().min(1).max(120) }).parse(data))
+  .handler(async ({ data }) => {
+    const response = await fetch(`${GATEWAY}/places/v1/places:autocomplete`, {
+      method: "POST",
+      headers: gatewayHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify({
+        input: data.input,
+        languageCode: "zh-TW",
+        regionCode: "TW",
+        includedRegionCodes: ["tw"],
+        locationBias: { circle: { center: TAIPEI, radius: BIAS_RADIUS_M } },
+      }),
+    });
+    if (!response.ok) {
+      console.error(`Places autocomplete failed [${response.status}]: ${await response.text()}`);
+      return { suggestions: [] as PlaceSuggestion[] };
+    }
+    const payload = (await response.json()) as {
+      suggestions?: Array<{
+        placePrediction?: {
+          placeId?: string;
+          structuredFormat?: {
+            mainText?: { text?: string };
+            secondaryText?: { text?: string };
+          };
+          text?: { text?: string };
+        };
+      }>;
+    };
+    const suggestions: PlaceSuggestion[] = [];
+    for (const item of payload.suggestions ?? []) {
+      const p = item.placePrediction;
+      if (!p?.placeId) continue;
+      suggestions.push({
+        placeId: p.placeId,
+        name: p.structuredFormat?.mainText?.text ?? p.text?.text ?? "",
+        secondary: p.structuredFormat?.secondaryText?.text ?? "",
+      });
+    }
+    return { suggestions: suggestions.slice(0, 6) };
+  });
+
+export const getPlaceDetails = createServerFn({ method: "POST" })
+  .inputValidator((data) => z.object({ placeId: z.string().min(3).max(400) }).parse(data))
+  .handler(async ({ data }) => {
+    const response = await fetch(
+      `${GATEWAY}/places/v1/places/${encodeURIComponent(data.placeId)}?languageCode=zh-TW&regionCode=TW`,
+      {
+        headers: gatewayHeaders({
+          "X-Goog-FieldMask":
+            "id,displayName,formattedAddress,location,rating,userRatingCount,primaryTypeDisplayName,googleMapsUri",
+        }),
+      },
+    );
+    if (!response.ok) await readError(response, "Place details");
+    const place = (await response.json()) as {
+      id: string;
+      displayName?: { text?: string };
+      formattedAddress?: string;
+      location?: { latitude: number; longitude: number };
+      rating?: number;
+      userRatingCount?: number;
+      primaryTypeDisplayName?: { text?: string };
+      googleMapsUri?: string;
+    };
+    if (!place.location) throw new Error("找不到這個地點的座標");
+    const venue: Venue = {
+      query: place.displayName?.text ?? "",
+      placeId: place.id,
+      name: place.displayName?.text ?? "",
+      address: place.formattedAddress ?? "",
+      lat: place.location.latitude,
+      lng: place.location.longitude,
+      googleMapsUri:
+        place.googleMapsUri ??
+        `https://www.google.com/maps/search/?api=1&query_place_id=${place.id}`,
+    };
+    if (typeof place.rating === "number") venue.rating = place.rating;
+    if (typeof place.userRatingCount === "number") venue.ratingCount = place.userRatingCount;
+    if (place.primaryTypeDisplayName?.text) venue.category = place.primaryTypeDisplayName.text;
+    return { venue };
+  });
