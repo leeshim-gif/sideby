@@ -910,7 +910,7 @@ function Home() {
                 >
                   {generating ? (
                     <>
-                      <RefreshCw className="spin" size={17} /> AI 正在整理你們的默契…
+                      <RefreshCw className="spin" size={17} /> AI 正在理解你的偏好…
                     </>
                   ) : (
                     <>
@@ -918,6 +918,15 @@ function Home() {
                     </>
                   )}
                 </button>
+                {aiError && (
+                  <div className="ai-error">
+                    <span>AI 暫時無法分析，再試一次。</span>
+                    <button className="btn btn-ghost" onClick={submitPrivate} disabled={generating}>
+                      <RefreshCw size={15} /> 再試一次
+                    </button>
+                  </div>
+                )}
+
               </div>
               <div className="privacy-side">
                 <div className="privacy-lock">
