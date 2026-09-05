@@ -934,37 +934,55 @@ function Home() {
                     <small>適合度</small>
                   </span>
                 </div>
-                {currentPlan.stops.map((stop, index) => (
-                  <div className="timeline-row" key={stop.name}>
-                    <div className="time-col">{stop.time}</div>
-                    <div className={`timeline-dot ${stop.color}`} />
+                {origin && (
+                  <div className="timeline-row origin-row">
+                    <div className="time-col">現在</div>
+                    <div className="timeline-dot yellow" />
                     <div className="stop-detail">
                       <div>
-                        <span className="stop-type">{stop.type}</span>
-                        <h3>{stop.name}</h3>
-                        <p>{stop.meta}</p>
+                        <span className="stop-type">出發點</span>
+                        <h3>{originLabel}</h3>
+                        <p>已使用你目前的位置作為起點</p>
                       </div>
-                      {index < currentPlan.stops.length - 1 && (
-                        <div className="travel-line">
-                          <span>步行 {index === 0 ? 6 : 8} 分鐘</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="stop-actions">
-                      <button
-                        className={`lock-stop ${lockedStops.includes(stop.name) ? "locked" : ""}`}
-                        onClick={() => toggleLock(stop)}
-                      >
-                        {lockedStops.includes(stop.name) ? "已鎖定" : "鎖定這站"}
-                      </button>
-                      {!lockedStops.includes(stop.name) && index > 0 && (
-                        <button className="replace-stop" onClick={() => replaceStop(stop)}>
-                          替換
-                        </button>
-                      )}
+                      <TravelChips leg={legs[0]} />
                     </div>
                   </div>
-                ))}
+                )}
+                {currentPlan.stops.map((stop, index) => {
+                  const venue = venues[stop.query];
+                  return (
+                    <div className="timeline-row" key={stop.name}>
+                      <div className="time-col">{stop.time}</div>
+                      <div className={`timeline-dot ${stop.color}`}>
+                        <span>{index}</span>
+                      </div>
+                      <div className="stop-detail">
+                        <div>
+                          <span className="stop-type">{stop.type}</span>
+                          <h3>{venue?.name ?? stop.name}</h3>
+                          <p>{stop.meta}</p>
+                        </div>
+                        {venue && <VenueDetails venue={venue} />}
+                        {index < currentPlan.stops.length - 1 && (
+                          <TravelChips leg={legFor(index)} />
+                        )}
+                      </div>
+                      <div className="stop-actions">
+                        <button
+                          className={`lock-stop ${lockedStops.includes(stop.name) ? "locked" : ""}`}
+                          onClick={() => toggleLock(stop)}
+                        >
+                          {lockedStops.includes(stop.name) ? "已鎖定" : "鎖定這站"}
+                        </button>
+                        {!lockedStops.includes(stop.name) && index > 0 && (
+                          <button className="replace-stop" onClick={() => replaceStop(stop)}>
+                            替換
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
                 <div className="final-summary">
                   <span>
                     <strong>3 小時 55 分</strong>總時間
@@ -976,9 +994,13 @@ function Home() {
                     <strong>捷運＋步行</strong>交通
                   </span>
                 </div>
+                {mapsError && (
+                  <p className="venue-address">實際場館資料暫時取不到，稍後會自動重試。</p>
+                )}
               </div>
-              <MapCard />
+              <DateMap stops={mapStops} />
             </div>
+
             <div className="final-actions">
               <button
                 className="btn btn-black"
