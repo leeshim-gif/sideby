@@ -268,7 +268,7 @@ export const getPlaceDetails = createServerFn({ method: "POST" })
   .inputValidator((data) => z.object({ placeId: z.string().min(3).max(400) }).parse(data))
   .handler(async ({ data }) => {
     const response = await fetch(
-      `${GATEWAY}/places/v1/${encodeURIComponent(data.placeId)}?languageCode=zh-TW&regionCode=TW`,
+      `${GATEWAY}/places/v1/places/${encodeURIComponent(data.placeId)}?languageCode=zh-TW&regionCode=TW`,
       {
         headers: gatewayHeaders({
           "X-Goog-FieldMask":
