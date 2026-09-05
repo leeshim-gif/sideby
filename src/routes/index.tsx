@@ -388,7 +388,8 @@ function Home() {
   const [transport, setTransport] = useState<string[]>(["步行", "捷運"]);
 
   const [visibility, setVisibility] = useState("private_session");
-  const [moods, setMoods] = useState<string[]>(["明亮", "放鬆"]);
+  const [moods, setMoods] = useState<string[]>(["放鬆"]);
+  const [expandedCats, setExpandedCats] = useState<string[]>([]);
   const [rawText, setRawText] = useState("");
   const [hardNo, setHardNo] = useState("");
   const [generating, setGenerating] = useState(false);
