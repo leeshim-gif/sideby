@@ -298,9 +298,23 @@ function Home() {
   const [joinCode, setJoinCode] = useState("");
   const [partnerJoined, setPartnerJoined] = useState(false);
 
-  const [date, setDate] = useState("今天，6 月 18 日");
-  const [time, setTime] = useState("18:00 — 22:00");
-  const [location, setLocation] = useState("中山捷運站");
+  const todayISO = useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate(),
+    ).padStart(2, "0")}`;
+  }, []);
+  const [dateISO, setDateISO] = useState(todayISO);
+  const [startTime, setStartTime] = useState("18:00");
+  const [endTime, setEndTime] = useState("22:00");
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [timePicker, setTimePicker] = useState<"start" | "end" | null>(null);
+  const [leaveAsk, setLeaveAsk] = useState(false);
+  const [location, setLocation] = useState("");
+  const [meetPlace, setMeetPlace] = useState<Venue | null>(null);
+  const date = formatDateLabel(dateISO);
+  const time = `${startTime} — ${endTime}`;
+
   const [budget, setBudget] = useState("2200");
   const [mode, setMode] = useState<"now" | "future">("now");
   const [transport, setTransport] = useState<string[]>(["步行", "捷運"]);
