@@ -1,7 +1,7 @@
 /// <reference types="google.maps" />
 let loaderPromise: Promise<typeof google.maps> | undefined;
 
-const CALLBACK_NAME = "__pairPathMapsReady";
+const CALLBACK_NAME = "__sideByMapsReady";
 
 export function loadGoogleMaps(): Promise<typeof google.maps> {
   if (typeof window === "undefined") return Promise.reject(new Error("no window"));

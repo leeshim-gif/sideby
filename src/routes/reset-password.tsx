@@ -8,9 +8,9 @@ import { authErrorMessage } from "@/lib/use-session";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "重設密碼｜默契出發" },
-      { name: "description", content: "為你的默契出發帳號設定一組新的密碼，之後就能繼續一起規劃約會。" },
-      { property: "og:title", content: "重設密碼｜默契出發" },
+      { title: "重設密碼｜SideBy" },
+      { name: "description", content: "為你的 SideBy 帳號設定一組新的密碼，之後就能繼續一起規劃約會。" },
+      { property: "og:title", content: "重設密碼｜SideBy" },
       { property: "og:description", content: "設定新密碼，回到你們的約會規劃。" },
     ],
   }),
@@ -48,7 +48,7 @@ function ResetPassword() {
     <div className="app-shell">
       <main className="page-wrap reset-wrap">
         <div className="auth-sheet static-sheet">
-          <span className="eyebrow">PAIRPATH ACCOUNT</span>
+          <span className="eyebrow">SIDEBY ACCOUNT</span>
           <h1 className="auth-title">設定新密碼</h1>
           <p className="auth-lede">輸入新的密碼，完成後就會自動登入。</p>
           <form className="auth-form" onSubmit={submit} noValidate>
