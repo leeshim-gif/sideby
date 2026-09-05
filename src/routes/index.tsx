@@ -179,7 +179,7 @@ function Home() {
   const [finalized, setFinalized] = useState(false);
 
   const currentPlan = useMemo(
-    () => plans.find((p) => p.id === selectedPlanId) ?? plans[0],
+    () => plans.find((p) => p.id === selectedPlanId) ?? plans[0]!,
     [plans, selectedPlanId],
   );
 

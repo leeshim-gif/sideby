@@ -25,12 +25,21 @@ function ResetPassword() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) return toast.error("密碼至少需要 6 個字元");
-    if (password !== confirm) return toast.error("兩次輸入的密碼不一樣");
+    if (password.length < 6) {
+      toast.error("密碼至少需要 6 個字元");
+      return;
+    }
+    if (password !== confirm) {
+      toast.error("兩次輸入的密碼不一樣");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(false);
-    if (error) return toast.error(authErrorMessage(error.message));
+    if (error) {
+      toast.error(authErrorMessage(error.message));
+      return;
+    }
     toast.success("密碼已更新，已為你登入");
     navigate({ to: "/", replace: true });
   };

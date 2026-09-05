@@ -31,7 +31,10 @@ export function AuthSheet({ open, onClose }: { open: boolean; onClose: () => voi
     e.preventDefault();
     if (busy) return;
     const mail = email.trim();
-    if (!mail) return toast.error("請輸入電子郵件");
+    if (!mail) {
+      toast.error("請輸入電子郵件");
+      return;
+    }
 
     if (mode === "forgot") {
       setBusy(true);
@@ -39,15 +42,24 @@ export function AuthSheet({ open, onClose }: { open: boolean; onClose: () => voi
         redirectTo: `${window.location.origin}/reset-password`,
       });
       setBusy(false);
-      if (error) return toast.error(authErrorMessage(error.message));
+      if (error) {
+      toast.error(authErrorMessage(error.message));
+      return;
+    }
       setSentReset(true);
       return;
     }
 
-    if (password.length < 6) return toast.error("密碼至少需要 6 個字元");
+    if (password.length < 6) {
+      toast.error("密碼至少需要 6 個字元");
+      return;
+    }
 
     if (mode === "signup") {
-      if (password !== confirm) return toast.error("兩次輸入的密碼不一樣");
+      if (password !== confirm) {
+      toast.error("兩次輸入的密碼不一樣");
+      return;
+    }
       setBusy(true);
       const { data, error } = await supabase.auth.signUp({
         email: mail,
@@ -55,7 +67,10 @@ export function AuthSheet({ open, onClose }: { open: boolean; onClose: () => voi
         options: { emailRedirectTo: window.location.origin },
       });
       setBusy(false);
-      if (error) return toast.error(authErrorMessage(error.message));
+      if (error) {
+      toast.error(authErrorMessage(error.message));
+      return;
+    }
       if (!data.session) {
         setSentVerify(true);
         return;
@@ -68,7 +83,10 @@ export function AuthSheet({ open, onClose }: { open: boolean; onClose: () => voi
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email: mail, password });
     setBusy(false);
-    if (error) return toast.error(authErrorMessage(error.message));
+    if (error) {
+      toast.error(authErrorMessage(error.message));
+      return;
+    }
     toast.success("登入成功，歡迎回來");
     onClose();
   };

@@ -58,13 +58,19 @@ export function ProfileMenu({ user }: { user: User }) {
       .from("profiles")
       .upsert({ id: user.id, ...fields, updated_at: new Date().toISOString() });
     setBusy(false);
-    if (error) return toast.error("儲存失敗，請再試一次");
+    if (error) {
+      toast.error("儲存失敗，請再試一次");
+      return;
+    }
     toast.success(message);
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) return toast.error(authErrorMessage(error.message));
+    if (error) {
+      toast.error(authErrorMessage(error.message));
+      return;
+    }
     setOpen(false);
     toast.success("已登出，隨時歡迎回來");
   };
