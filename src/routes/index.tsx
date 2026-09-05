@@ -361,9 +361,41 @@ function Home() {
   const [authOpen, setAuthOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("room");
   const [role] = useState("A");
-  const [inviteCode, setInviteCode] = useState("842716");
   const [joinCode, setJoinCode] = useState("");
   const [partnerJoined, setPartnerJoined] = useState(false);
+  const [room, setRoom] = useState<CoupleRoom | null>(null);
+  const [roomLoading, setRoomLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [joining, setJoining] = useState(false);
+
+  const callGetMyRoom = useServerFn(getMyRoom);
+  const callCreateRoom = useServerFn(createRoom);
+  const callJoinRoom = useServerFn(joinRoom);
+
+  useEffect(() => {
+    if (!user) {
+      setRoom(null);
+      return;
+    }
+    let alive = true;
+    setRoomLoading(true);
+    callGetMyRoom({ data: undefined })
+      .then((result) => {
+        if (alive) setRoom(result.room);
+      })
+      .catch(() => null)
+      .finally(() => {
+        if (alive) setRoomLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [user, callGetMyRoom]);
+
+  useEffect(() => {
+    if (room && room.memberCount >= 2) setPartnerJoined(true);
+  }, [room]);
+
 
   const todayISO = useMemo(() => {
     const d = new Date();
