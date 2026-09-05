@@ -31,7 +31,11 @@ export function authErrorMessage(message: string): string {
   if (m.includes("unable to validate email") || m.includes("invalid email"))
     return "電子郵件格式看起來不太對";
   if (m.includes("rate limit") || m.includes("too many")) return "嘗試次數太多，請稍後再試";
-  if (m.includes("weak password")) return "密碼強度不足，請換一組更複雜的密碼";
+  if (m.includes("weak password") || m.includes("known to be weak") || m.includes("pwned"))
+    return "這組密碼太容易被猜到，請換一組更獨特的密碼";
+  if (m.includes("same as the old password") || m.includes("should be different"))
+    return "新密碼不能和舊密碼相同";
+  if (m.includes("email address") && m.includes("invalid")) return "這個電子郵件無法使用，請換一個";
   if (m.includes("network") || m.includes("failed to fetch")) return "網路連線不穩，請再試一次";
   return "發生問題，請稍後再試一次";
 }
