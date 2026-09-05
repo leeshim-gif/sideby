@@ -9,7 +9,6 @@ import {
   Clock,
   Footprints,
   Heart,
-  Link2,
   Lock,
   MapPin,
   Navigation,
@@ -33,6 +32,7 @@ import { useSession } from "@/lib/use-session";
 import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
 import { analyzePreferenceInput } from "@/lib/preferences.functions";
 import type { PreferenceProfile } from "@/lib/preference-types";
+import { createRoom, getMyRoom, joinRoom, type CoupleRoom } from "@/lib/rooms.functions";
 
 
 
@@ -361,9 +361,41 @@ function Home() {
   const [authOpen, setAuthOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("room");
   const [role] = useState("A");
-  const [inviteCode, setInviteCode] = useState("842716");
   const [joinCode, setJoinCode] = useState("");
   const [partnerJoined, setPartnerJoined] = useState(false);
+  const [room, setRoom] = useState<CoupleRoom | null>(null);
+  const [roomLoading, setRoomLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [joining, setJoining] = useState(false);
+
+  const callGetMyRoom = useServerFn(getMyRoom);
+  const callCreateRoom = useServerFn(createRoom);
+  const callJoinRoom = useServerFn(joinRoom);
+
+  useEffect(() => {
+    if (!user) {
+      setRoom(null);
+      return;
+    }
+    let alive = true;
+    setRoomLoading(true);
+    callGetMyRoom({ data: undefined })
+      .then((result) => {
+        if (alive) setRoom(result.room);
+      })
+      .catch(() => null)
+      .finally(() => {
+        if (alive) setRoomLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [user, callGetMyRoom]);
+
+  useEffect(() => {
+    if (room && room.memberCount >= 2) setPartnerJoined(true);
+  }, [room]);
+
 
   const todayISO = useMemo(() => {
     const d = new Date();
@@ -519,29 +551,58 @@ function Home() {
 
 
 
-  const createRoom = () => {
-    setInviteCode(String(Math.floor(100000 + Math.random() * 899999)));
-    setPartnerJoined(false);
-    toast.success("房間已建立，邀請連結可以分享了");
-    go("shared");
+  const handleCreateRoom = async () => {
+    if (!user) {
+      toast.error("請先登入，才能建立你們的空間");
+      setAuthOpen(true);
+      return;
+    }
+    setCreating(true);
+    try {
+      const result = await callCreateRoom({ data: undefined });
+      setRoom(result.room);
+      toast.success("空間已建立，把邀請碼傳給另一半吧");
+    } catch {
+      toast.error("建立空間時發生問題，請再試一次");
+    } finally {
+      setCreating(false);
+    }
   };
 
   const copyInvite = async () => {
-    const origin = typeof window === "undefined" ? "" : window.location.origin;
-    await navigator.clipboard?.writeText(`${origin}/room/${inviteCode}`).catch(() => null);
-    toast.success("邀請連結已複製");
+    if (!room) return;
+    await navigator.clipboard?.writeText(room.inviteCode).catch(() => null);
+    toast.success("邀請碼已複製");
   };
 
-  const joinRoom = () => {
-    if (joinCode.length >= 4) {
-      setInviteCode(joinCode);
-      setPartnerJoined(true);
-      toast.success("已加入雙人房間");
-      go("shared");
-    } else {
-      toast.error("請輸入邀請碼");
+  const handleJoinRoom = async () => {
+    if (!user) {
+      toast.error("請先登入，才能加入另一半的空間");
+      setAuthOpen(true);
+      return;
+    }
+    if (joinCode.trim().length === 0) return;
+    setJoining(true);
+    try {
+      const result = await callJoinRoom({ data: { code: joinCode } });
+      if (result.ok) {
+        setRoom(result.room);
+        setJoinCode("");
+        toast.success("已加入你們共同的 SideBy 空間");
+        return;
+      }
+      if (result.reason === "full") toast.error("這個 SideBy 空間已經完成配對。");
+      else if (result.reason === "own_room") toast.error("這已經是你們的空間了，不需要再加入。");
+      else if (result.reason === "already_paired")
+        toast.error("你已經在一個 SideBy 空間裡了。");
+      else toast.error("找不到這個邀請碼，請確認後再試一次。");
+    } catch {
+      toast.error("加入時發生問題，請再試一次");
+    } finally {
+      setJoining(false);
     }
   };
+
 
   const submitPrivate = async () => {
     setGenerating(true);
@@ -619,8 +680,14 @@ function Home() {
         </div>
         <div className="top-status">
           <span className="status-dot" />
-          雙人房間已開啟 <span className="code-pill">{inviteCode}</span>
+          {room
+            ? room.memberCount >= 2
+              ? "兩個人的空間"
+              : "等另一半加入"
+            : "還沒有共同空間"}
+          {room && <span className="code-pill">{room.inviteCode}</span>}
         </div>
+
         <div className="top-actions">
           <button className="icon-btn" aria-label="房間成員">
             <Users size={18} />
@@ -703,21 +770,26 @@ function Home() {
                 <p className="hero-lede">
                   不必為了「去哪裡」來回討論。說出你們想要的感覺，讓 AI 幫你們找到今晚剛剛好的默契。
                 </p>
-                <div className="hero-actions">
-                  <button className="btn btn-black" onClick={createRoom}>
-                    建立新的約會房間 <ArrowRight size={17} />
-                  </button>
-                  <button className="text-action" onClick={() => setJoinCode("842716")}>
-                    我有邀請碼 <Link2 size={16} />
-                  </button>
-                </div>
+                {room ? (
+                  <div className="hero-actions">
+                    <button className="btn btn-black" onClick={() => go("shared")}>
+                      開始安排這次約會 <ArrowRight size={17} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="hero-actions">
+                    <button className="btn btn-black" onClick={handleCreateRoom} disabled={creating}>
+                      {creating ? "正在建立…" : "建立我們的空間"} <ArrowRight size={17} />
+                    </button>
+                  </div>
+                )}
                 <div className="proof-line">
                   <span className="avatar-stack">
                     <i>A</i>
                     <i>B</i>
                   </span>
                   <span>
-                    兩個人，剛剛好。<strong>不用註冊也能開始</strong>
+                    兩個人，剛剛好。<strong>一個空間，兩個人共用</strong>
                   </span>
                 </div>
               </div>
@@ -745,26 +817,59 @@ function Home() {
               </div>
             </section>
 
-            <section className="join-strip">
-              <div>
-                <span className="eyebrow">JOIN YOUR PARTNER</span>
-                <h2>另一半已經建立房間？</h2>
-              </div>
-              <div className="join-form">
-                <input
-                  className="field-input"
-                  value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value)}
-                  placeholder="輸入 6 位邀請碼"
-                  maxLength={6}
-                />
-                <button className="btn btn-lilac" onClick={joinRoom}>
-                  加入房間
-                </button>
-              </div>
-            </section>
+            {roomLoading ? (
+              <section className="join-strip">
+                <p className="join-hint">正在確認你們的空間…</p>
+              </section>
+            ) : room ? (
+              <section className="join-strip">
+                <div>
+                  <span className="eyebrow">YOUR SIDEBY SPACE</span>
+                  <h2>{room.memberCount >= 2 ? "你們已經在同一個空間" : "邀請另一半加入"}</h2>
+                  <p className="join-hint">
+                    {room.memberCount >= 2
+                      ? "兩個人的空間已經配對完成，之後的約會紀錄都會一起留在這裡。"
+                      : "把這組邀請碼傳給另一半，對方輸入後就會加入你們共同的 SideBy 空間。"}
+                  </p>
+                </div>
+                <div className="join-form">
+                  <span className="invite-code">{room.inviteCode}</span>
+                  <button className="btn btn-lilac" onClick={copyInvite}>
+                    複製邀請碼
+                  </button>
+                </div>
+              </section>
+            ) : (
+              <section className="join-strip">
+                <div>
+                  <span className="eyebrow">JOIN YOUR PARTNER</span>
+                  <h2>加入另一半的空間</h2>
+                  <p className="join-hint">
+                    另一半已經建立 SideBy 空間了嗎？輸入邀請碼就可以加入。
+                  </p>
+                </div>
+                <div className="join-form">
+                  <input
+                    className="field-input"
+                    value={joinCode}
+                    onChange={(e) => setJoinCode(e.target.value)}
+                    placeholder="輸入邀請碼"
+                    autoCapitalize="characters"
+                    maxLength={12}
+                  />
+                  <button
+                    className="btn btn-lilac"
+                    onClick={handleJoinRoom}
+                    disabled={joining || joinCode.trim().length === 0}
+                  >
+                    {joining ? "加入中…" : "加入空間"}
+                  </button>
+                </div>
+              </section>
+            )}
           </>
         )}
+
 
         {screen === "shared" && (
           <section className="flow-section">
