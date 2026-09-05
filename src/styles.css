@@ -59,10 +59,16 @@ textarea::placeholder {
   opacity: 0.72;
 }
 
+button,
 input,
-textarea {
-  font: inherit;
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
 }
+
 button {
   cursor: pointer;
 }
