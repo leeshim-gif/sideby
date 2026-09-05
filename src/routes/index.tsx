@@ -560,6 +560,49 @@ function Home() {
         </div>
       </header>
       <AuthSheet open={authOpen} onClose={() => setAuthOpen(false)} />
+      <DateSheet
+        open={datePickerOpen}
+        value={dateISO}
+        onClose={() => setDatePickerOpen(false)}
+        onSelect={setDateISO}
+      />
+      <TimeSheet
+        open={timePicker !== null}
+        title={timePicker === "end" ? "預計結束" : "開始時間"}
+        value={timePicker === "end" ? endTime : startTime}
+        onClose={() => setTimePicker(null)}
+        onConfirm={(t) => {
+          if (timePicker === "end") setEndTime(t);
+          else {
+            setStartTime(t);
+            if (t > endTime && endTime > "06:00") setEndTime(t);
+          }
+          setTimePicker(null);
+        }}
+      />
+      {leaveAsk && (
+        <div className="picker-backdrop" role="dialog" aria-modal="true">
+          <button className="picker-scrim" aria-label="關閉" onClick={() => setLeaveAsk(false)} />
+          <div className="picker-sheet confirm-sheet">
+            <p>要離開嗎？尚未儲存的內容可能會遺失。</p>
+            <div className="confirm-actions">
+              <button className="btn btn-lilac" onClick={() => setLeaveAsk(false)}>
+                繼續編輯
+              </button>
+              <button
+                className="btn btn-black"
+                onClick={() => {
+                  setLeaveAsk(false);
+                  go("room");
+                }}
+              >
+                離開
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       <main className="page-wrap">
         <div className="progress-row">
