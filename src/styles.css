@@ -1075,7 +1075,7 @@ label small,
   border-left: 1.5px dashed #111;
   align-items: center;
   height: 31px;
-  margin-top: 11px;
+  margin-top: 15px;
   padding-left: 12px;
   font-size: 10px;
   font-weight: 700;
@@ -1110,16 +1110,22 @@ label small,
 .final-summary {
   border-top: 1.5px solid #111;
   gap: 18px;
-  margin-top: 8px;
-  padding-top: 19px;
+  margin-top: 22px;
+  padding-top: 22px;
   display: flex;
 }
 .final-summary span {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
   font-size: 10px;
+  line-height: 1.6;
 }
 .final-summary strong {
+  margin-bottom: 4px;
   font-size: 14px;
   display: block;
+  overflow-wrap: anywhere;
 }
 .map-card {
   background: #71d7b1;
@@ -1787,11 +1793,11 @@ label small,
   gap: 4px;
 }
 .venue-block {
-  margin-top: 10px;
+  margin-top: 12px;
   border: 1.5px solid #111;
   border-radius: 12px;
   background: #fffaf4;
-  padding: 10px;
+  padding: 14px;
   box-shadow: 3px 3px #111;
 }
 .venue-photo {
