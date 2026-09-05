@@ -322,7 +322,92 @@ function Home() {
     [plans, selectedPlanId],
   );
 
+  // ---- Real Google Places / Routes data for the selected itinerary ----
+  const lookupVenues = useServerFn(resolveVenues);
+  const lookupLegs = useServerFn(computeTravelLegs);
+  const [venues, setVenues] = useState<Record<string, Venue>>({});
+  const [legs, setLegs] = useState<TravelLeg[]>([]);
+  const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
+  const [originLabel, setOriginLabel] = useState("現在位置");
+  const [mapsError, setMapsError] = useState(false);
+
+  const askLocation = useCallback(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setOriginLabel("現在位置");
+      },
+      () => {
+        // Permission denied → fall back to the meeting point the couple chose.
+        setOrigin(null);
+        setOriginLabel(location);
+      },
+      { timeout: 8000 },
+    );
+  }, [location]);
+
+  const stopQueries = useMemo(
+    () => currentPlan.stops.map((s) => s.query).join("|"),
+    [currentPlan],
+  );
+
+  useEffect(() => {
+    if (screen !== "final" && screen !== "plans") return;
+    let cancelled = false;
+    const queries = stopQueries.split("|").filter(Boolean);
+    lookupVenues({ data: { queries } })
+      .then((res) => {
+        if (cancelled) return;
+        setVenues((prev) => {
+          const next = { ...prev };
+          res.venues.forEach((v) => {
+            next[v.query] = v;
+          });
+          return next;
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setMapsError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [screen, stopQueries, lookupVenues]);
+
+  const mapStops = useMemo<MapStop[]>(() => {
+    const list: MapStop[] = [];
+    if (origin) list.push({ label: originLabel, lat: origin.lat, lng: origin.lng, color: "yellow", isOrigin: true });
+    currentPlan.stops.forEach((stop) => {
+      const venue = venues[stop.query];
+      if (venue) list.push({ label: venue.name, lat: venue.lat, lng: venue.lng, color: stop.color });
+    });
+    return list;
+  }, [currentPlan, venues, origin, originLabel]);
+
+  useEffect(() => {
+    if (screen !== "final" || mapStops.length < 2) return;
+    let cancelled = false;
+    lookupLegs({
+      data: { points: mapStops.map((s) => ({ label: s.label, lat: s.lat, lng: s.lng })) },
+    })
+      .then((res) => {
+        if (!cancelled) setLegs(res.legs);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [screen, mapStops, lookupLegs]);
+
+  useEffect(() => {
+    if (screen === "final") askLocation();
+  }, [screen, askLocation]);
+
+  const legFor = (index: number) => legs[origin ? index + 1 : index];
+
   const go = (next: Screen) => setScreen(next);
+
 
   const createRoom = () => {
     setInviteCode(String(Math.floor(100000 + Math.random() * 899999)));
