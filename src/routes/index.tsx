@@ -703,21 +703,26 @@ function Home() {
                 <p className="hero-lede">
                   不必為了「去哪裡」來回討論。說出你們想要的感覺，讓 AI 幫你們找到今晚剛剛好的默契。
                 </p>
-                <div className="hero-actions">
-                  <button className="btn btn-black" onClick={createRoom}>
-                    建立新的約會房間 <ArrowRight size={17} />
-                  </button>
-                  <button className="text-action" onClick={() => setJoinCode("842716")}>
-                    我有邀請碼 <Link2 size={16} />
-                  </button>
-                </div>
+                {room ? (
+                  <div className="hero-actions">
+                    <button className="btn btn-black" onClick={() => go("shared")}>
+                      開始安排這次約會 <ArrowRight size={17} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="hero-actions">
+                    <button className="btn btn-black" onClick={handleCreateRoom} disabled={creating}>
+                      {creating ? "正在建立…" : "建立我們的空間"} <ArrowRight size={17} />
+                    </button>
+                  </div>
+                )}
                 <div className="proof-line">
                   <span className="avatar-stack">
                     <i>A</i>
                     <i>B</i>
                   </span>
                   <span>
-                    兩個人，剛剛好。<strong>不用註冊也能開始</strong>
+                    兩個人，剛剛好。<strong>一個空間，兩個人共用</strong>
                   </span>
                 </div>
               </div>
@@ -745,26 +750,59 @@ function Home() {
               </div>
             </section>
 
-            <section className="join-strip">
-              <div>
-                <span className="eyebrow">JOIN YOUR PARTNER</span>
-                <h2>另一半已經建立房間？</h2>
-              </div>
-              <div className="join-form">
-                <input
-                  className="field-input"
-                  value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value)}
-                  placeholder="輸入 6 位邀請碼"
-                  maxLength={6}
-                />
-                <button className="btn btn-lilac" onClick={joinRoom}>
-                  加入房間
-                </button>
-              </div>
-            </section>
+            {roomLoading ? (
+              <section className="join-strip">
+                <p className="join-hint">正在確認你們的空間…</p>
+              </section>
+            ) : room ? (
+              <section className="join-strip">
+                <div>
+                  <span className="eyebrow">YOUR SIDEBY SPACE</span>
+                  <h2>{room.memberCount >= 2 ? "你們已經在同一個空間" : "邀請另一半加入"}</h2>
+                  <p className="join-hint">
+                    {room.memberCount >= 2
+                      ? "兩個人的空間已經配對完成，之後的約會紀錄都會一起留在這裡。"
+                      : "把這組邀請碼傳給另一半，對方輸入後就會加入你們共同的 SideBy 空間。"}
+                  </p>
+                </div>
+                <div className="join-form">
+                  <span className="invite-code">{room.inviteCode}</span>
+                  <button className="btn btn-lilac" onClick={copyInvite}>
+                    複製邀請碼
+                  </button>
+                </div>
+              </section>
+            ) : (
+              <section className="join-strip">
+                <div>
+                  <span className="eyebrow">JOIN YOUR PARTNER</span>
+                  <h2>加入另一半的空間</h2>
+                  <p className="join-hint">
+                    另一半已經建立 SideBy 空間了嗎？輸入邀請碼就可以加入。
+                  </p>
+                </div>
+                <div className="join-form">
+                  <input
+                    className="field-input"
+                    value={joinCode}
+                    onChange={(e) => setJoinCode(e.target.value)}
+                    placeholder="輸入邀請碼"
+                    autoCapitalize="characters"
+                    maxLength={12}
+                  />
+                  <button
+                    className="btn btn-lilac"
+                    onClick={handleJoinRoom}
+                    disabled={joining || joinCode.trim().length === 0}
+                  >
+                    {joining ? "加入中…" : "加入空間"}
+                  </button>
+                </div>
+              </section>
+            )}
           </>
         )}
+
 
         {screen === "shared" && (
           <section className="flow-section">
