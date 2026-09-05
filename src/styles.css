@@ -1919,7 +1919,7 @@ label small,
   margin-top: 12px;
   padding: 12px 14px;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--peach) 45%, transparent);
+  background: var(--muted);
   font-size: 14px;
 }
 .ai-error .btn {
