@@ -224,7 +224,72 @@ function FlowHeader({
 }
 
 
+function VenueDetails({ venue }: { venue: Venue }) {
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    venue.name,
+  )}&query_place_id=${venue.placeId}`;
+  const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+    venue.name,
+  )}&destination_place_id=${venue.placeId}&travelmode=transit`;
+
+  return (
+    <div className="venue-block">
+      {venue.photoUri && (
+        <img className="venue-photo" src={venue.photoUri} alt={`${venue.name} 實景照片`} loading="lazy" />
+      )}
+      <div className="venue-meta">
+        <span className="venue-name">{venue.name}</span>
+        {venue.category && <span className="venue-tag">{venue.category}</span>}
+        {typeof venue.rating === "number" && (
+          <span className="venue-tag">
+            <Star size={12} fill="currentColor" /> {venue.rating.toFixed(1)}
+            {venue.ratingCount ? `（${venue.ratingCount}）` : ""}
+          </span>
+        )}
+        {typeof venue.openNow === "boolean" && (
+          <span className={`venue-tag ${venue.openNow ? "open" : "closed"}`}>
+            <Clock size={12} /> {venue.openNow ? "營業中" : "目前休息"}
+          </span>
+        )}
+      </div>
+      {venue.address && <p className="venue-address">{venue.address}</p>}
+      <div className="venue-actions">
+        <a className="venue-btn" href={mapsUrl} target="_blank" rel="noreferrer">
+          <MapPin size={14} /> 在 Google 地圖開啟
+        </a>
+        <a className="venue-btn nav" href={navUrl} target="_blank" rel="noreferrer">
+          <Navigation size={14} /> 開始導航
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function TravelChips({ leg }: { leg: TravelLeg | undefined }) {
+  if (!leg) return <div className="travel-line"><span>正在計算交通時間…</span></div>;
+  return (
+    <div className="travel-line">
+      {leg.walkMinutes && (
+        <span>
+          <Footprints size={13} /> 步行 {leg.walkMinutes} 分鐘
+        </span>
+      )}
+      {leg.transitMinutes && (
+        <span>
+          <TrainFront size={13} /> 捷運 {leg.transitMinutes} 分鐘
+        </span>
+      )}
+      {leg.distanceKm && (
+        <span>
+          <RouteIcon size={13} /> 距離 {leg.distanceKm} km
+        </span>
+      )}
+    </div>
+  );
+}
+
 function Home() {
+
   const { user } = useSession();
   const [authOpen, setAuthOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("room");
