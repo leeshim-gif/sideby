@@ -26,9 +26,39 @@ body,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "DM Sans", "Noto Sans TC", sans-serif;
+  /* Chinese resolves to Iansui (CJK unicode-range); Latin/digits stay on DM Sans */
+  font-family: "Iansui", "DM Sans", "Noto Sans TC", sans-serif;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.005em;
+  font-synthesis: weight style;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 800;
+  line-height: 1.28;
+}
+label,
+.btn,
 button,
+select,
+.account-eyebrow {
+  font-weight: 700;
+}
+input,
+textarea {
+  font-weight: 600;
+}
+input::placeholder,
+textarea::placeholder {
+  font-weight: 600;
+  opacity: 0.72;
+}
+
 input,
 textarea {
   font: inherit;
