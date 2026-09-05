@@ -632,6 +632,9 @@ function Home() {
 
         {screen === "shared" && (
           <section className="flow-section">
+            <button className="flow-close" aria-label="關閉建立新的約會" onClick={requestLeave}>
+              <X size={20} />
+            </button>
             <FlowHeader
               kicker="STEP 01 / TOGETHER"
               title="先決定你們的共同條件"
@@ -657,32 +660,33 @@ function Home() {
                 <div className="two-col">
                   <label>
                     <span>日期</span>
-                    <input
-                      className="field-input"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
+                    <button className="field-input picker-trigger" onClick={() => setDatePickerOpen(true)}>
+                      <CalendarDays size={16} /> {date}
+                    </button>
                   </label>
                   <label>
-                    <span>時間</span>
-                    <input
-                      className="field-input"
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                    />
+                    <span>開始時間</span>
+                    <button className="field-input picker-trigger" onClick={() => setTimePicker("start")}>
+                      <Clock size={16} /> {startTime}
+                    </button>
                   </label>
                 </div>
                 <label>
-                  <span>集合地點</span>
-                  <div className="input-icon">
-                    <MapPin size={17} />
-                    <input
-                      className="field-input"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                    />
-                  </div>
+                  <span>預計結束</span>
+                  <button className="field-input picker-trigger" onClick={() => setTimePicker("end")}>
+                    <Clock size={16} /> {endTime}
+                  </button>
                 </label>
+                <label>
+                  <span>集合地點</span>
+                  <PlaceField
+                    value={location}
+                    place={meetPlace}
+                    onChange={setLocation}
+                    onPick={setMeetPlace}
+                  />
+                </label>
+
                 <div className="budget-row">
                   <label>
                     <span>理想預算</span>
