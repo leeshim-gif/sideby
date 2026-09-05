@@ -27,6 +27,9 @@ import {
 import { AuthSheet } from "@/components/AuthSheet";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { DateMap, type MapStop } from "@/components/DateMap";
+import { DateSheet, TimeSheet, formatDateLabel } from "@/components/DateSheet";
+import { PlaceField } from "@/components/PlaceField";
+
 import { useSession } from "@/lib/use-session";
 import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
 
