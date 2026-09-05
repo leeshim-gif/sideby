@@ -117,7 +117,7 @@ export function PlaceField({
           }}
         />
       </div>
-      {open && (query.trim().length >= 2 || busy) && (
+      {open && place?.name !== query.trim() && (query.trim().length >= 2 || busy) && (
         <div className="place-suggestions">
           {busy && suggestions.length === 0 && <div className="place-empty">正在搜尋地點…</div>}
           {!busy && suggestions.length === 0 && <div className="place-empty">找不到相符的地點</div>}
