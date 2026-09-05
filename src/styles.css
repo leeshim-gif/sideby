@@ -1031,7 +1031,11 @@ label small,
   grid-template-columns: 45px 15px 1fr auto;
   gap: 12px;
   min-height: 84px;
+  padding: 8px 0;
   display: grid;
+}
+.stop-detail {
+  min-width: 0;
 }
 .time-col {
   padding-top: 2px;
@@ -1048,14 +1052,18 @@ label small,
 }
 .stop-detail h3 {
   letter-spacing: -0.03em;
-  margin: 4px 0 3px;
+  margin: 6px 0 6px;
   font-size: 17px;
   font-weight: 900;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 .stop-detail p {
   margin: 0;
   font-size: 11px;
   font-weight: 700;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
 }
 .stop-type {
   background: #e5ddd7;
