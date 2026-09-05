@@ -1349,8 +1349,11 @@ label small,
   .form-card,
   .private-card,
   .card-surface {
-    padding: 20px;
+    padding: 22px;
     box-shadow: 4px 4px #111;
+  }
+  .flow-section {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
   .side-note,
   .privacy-side {
@@ -1397,12 +1400,21 @@ label small,
   .stop-actions {
     flex-direction: row;
     grid-column: 3;
-    margin-top: -6px;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .lock-stop,
+  .replace-stop {
+    flex: 1;
+    min-height: 34px;
+    padding: 6px 10px;
+    text-align: center;
+    font-size: 11px;
   }
   .lock-stop {
     grid-column: 3;
-    justify-self: start;
-    margin-top: -10px;
+    justify-self: stretch;
+    align-self: stretch;
   }
   .final-summary {
     justify-content: space-between;
