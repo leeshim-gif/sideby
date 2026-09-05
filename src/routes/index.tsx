@@ -212,7 +212,66 @@ const INITIAL_PLANS: Plan[] = [
   },
 ];
 
-const MOODS = ["明亮", "可愛", "安靜", "浪漫", "放鬆", "有趣"];
+const PREF_CATEGORIES: { key: string; title: string; initial: number; options: string[] }[] = [
+  {
+    key: "vibe",
+    title: "今天想要的氛圍",
+    initial: 6,
+    options: [
+      "浪漫",
+      "放鬆",
+      "安靜",
+      "有趣",
+      "有質感",
+      "療癒",
+      "有儀式感",
+      "新鮮感",
+      "熱鬧",
+      "私密感",
+      "輕鬆隨性",
+      "特別一點",
+    ],
+  },
+  {
+    key: "state",
+    title: "今天的狀態",
+    initial: 6,
+    options: [
+      "有點累",
+      "精神很好",
+      "不想動腦",
+      "想聊天",
+      "想放空",
+      "想走走",
+      "想做點事情",
+      "想被照顧",
+    ],
+  },
+  {
+    key: "action",
+    title: "想要的互動",
+    initial: 6,
+    options: [
+      "好好聊天",
+      "一起體驗",
+      "一起吃東西",
+      "散步",
+      "看展 / 看表演",
+      "一起拍照",
+      "動手做東西",
+      "找新店",
+      "小酌",
+      "看夜景",
+    ],
+  },
+];
+
+const VISIBILITY_OPTIONS = [
+  { value: "private_session", label: "只限本次", desc: "這次配對結束後不作為長期偏好" },
+  { value: "private_remembered", label: "讓 AI 之後也記得", desc: "之後推薦時可以參考" },
+  { value: "shared", label: "可以讓另一半看到", desc: "這段內容也可以顯示給對方" },
+];
+
 
 function FlowHeader({
   kicker,
