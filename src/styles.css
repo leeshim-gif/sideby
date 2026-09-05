@@ -1218,8 +1218,8 @@ label small,
 }
 .final-actions {
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 27px;
+  gap: 14px;
+  margin-top: 36px;
 }
 .mobile-bottom {
   display: none;
@@ -1838,16 +1838,18 @@ label small,
   background: #ffb9a3;
 }
 .venue-address {
-  margin: 7px 0 0;
+  margin: 9px 0 0;
   font-size: 11px;
   font-weight: 600;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
   opacity: 0.8;
 }
 .venue-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 9px;
+  gap: 8px;
+  margin-top: 12px;
 }
 .venue-btn {
   display: inline-flex;
