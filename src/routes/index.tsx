@@ -32,6 +32,9 @@ import { PlaceField } from "@/components/PlaceField";
 
 import { useSession } from "@/lib/use-session";
 import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
+import { analyzePreferenceInput } from "@/lib/preferences.functions";
+import type { PreferenceProfile } from "@/lib/preference-ai.server";
+
 
 
 export const Route = createFileRoute("/")({
