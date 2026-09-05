@@ -477,15 +477,24 @@ function Home() {
     }
   };
 
-  const submitPrivate = () => {
+  const submitPrivate = async () => {
     setGenerating(true);
-    setTimeout(() => {
-      setGenerating(false);
+    setAiError(false);
+    try {
+      const result = await runPreferenceAnalysis({
+        data: { moods, freeText: rawText, hardNo, visibility },
+      });
+      setPreferenceProfile(result.profile);
       setPartnerJoined(true);
       toast.success("AI 已完成新一輪配對");
       go("plans");
-    }, 1800);
+    } catch {
+      setAiError(true);
+    } finally {
+      setGenerating(false);
+    }
   };
+
 
   const toggleLock = (stop: Stop) => {
     const locked = lockedStops.includes(stop.name);
