@@ -518,6 +518,13 @@ label small,
 .input-icon input {
   padding-left: 35px;
 }
+.choice-row,
+.chip-grid,
+.privacy-options {
+  flex-wrap: wrap;
+  gap: 8px;
+  display: flex;
+}
 .wide {
   width: 100%;
   margin-top: 25px;
