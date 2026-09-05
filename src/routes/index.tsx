@@ -9,7 +9,6 @@ import {
   Clock,
   Footprints,
   Heart,
-  Link2,
   Lock,
   MapPin,
   Navigation,
@@ -33,6 +32,7 @@ import { useSession } from "@/lib/use-session";
 import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
 import { analyzePreferenceInput } from "@/lib/preferences.functions";
 import type { PreferenceProfile } from "@/lib/preference-types";
+import { createRoom, getMyRoom, joinRoom, type CoupleRoom } from "@/lib/rooms.functions";
 
 
 
