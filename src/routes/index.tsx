@@ -893,76 +893,112 @@ function Home() {
             />
             <div className="private-layout">
               <div className="private-card">
-                <div className="privacy-banner">
-                  <Lock size={18} />
+                <div className="privacy-note">
+                  <Lock size={15} />
                   <div>
-                    <strong>私密輸入已加密</strong>
-                    <span>只有 AI 會使用這段內容</span>
+                    <strong>這段內容只會由 AI 用於配對</strong>
+                    <span>除非你主動選擇分享，另一半不會看到原始內容。</span>
                   </div>
-                  <span className="toggle-on">ON</span>
                 </div>
-                <div className="field-label">
-                  今天想要什麼感覺？<small>可複選</small>
+
+                <div className="pref-block">
+                  <div className="block-head">
+                    <h4>今天想要什麼感覺？</h4>
+                    <small>可複選</small>
+                  </div>
+                  {PREF_CATEGORIES.map((cat) => {
+                    const expanded = expandedCats.includes(cat.key);
+                    const shown = expanded ? cat.options : cat.options.slice(0, cat.initial);
+                    const hidden = cat.options.length - cat.initial;
+                    return (
+                      <div className="pref-cat" key={cat.key}>
+                        <div className="pref-cat-title">{cat.title}</div>
+                        <div className="chip-grid">
+                          {shown.map((m) => (
+                            <button
+                              key={m}
+                              type="button"
+                              className={`mood-chip ${moods.includes(m) ? "selected" : ""}`}
+                              onClick={() =>
+                                setMoods((prev) =>
+                                  prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m],
+                                )
+                              }
+                            >
+                              {moods.includes(m) && <Check size={13} />}
+                              {m}
+                            </button>
+                          ))}
+                          {hidden > 0 && (
+                            <button
+                              type="button"
+                              className="chip-more"
+                              onClick={() =>
+                                setExpandedCats((prev) =>
+                                  expanded ? prev.filter((k) => k !== cat.key) : [...prev, cat.key],
+                                )
+                              }
+                            >
+                              {expanded ? "收起" : `更多選擇 +${hidden}`}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="chip-grid">
-                  {MOODS.map((m) => (
-                    <button
-                      key={m}
-                      className={`mood-chip ${moods.includes(m) ? "selected" : ""}`}
-                      onClick={() =>
-                        setMoods((prev) =>
-                          prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m],
-                        )
-                      }
-                    >
-                      {moods.includes(m) && <Check size={14} />}
-                      {m}
-                    </button>
-                  ))}
-                </div>
-                <label>
-                  <span>
-                    你可以直接說 <small>選填</small>
-                  </span>
+
+                <div className="pref-block">
+                  <div className="block-head">
+                    <h4>還有什麼想告訴 AI？</h4>
+                    <small>選填</small>
+                  </div>
+                  <p className="block-help">不用整理成條件，直接說就好。</p>
                   <textarea
                     className="field-input"
                     value={rawText}
                     onChange={(e) => setRawText(e.target.value)}
-                    placeholder="例如：想找明亮一點的咖啡廳，可愛但不要太幼稚。今天有點累，不想走太多路。"
+                    placeholder="例如：今天有點累，不想走太多路。想找可以坐久一點、氣氛舒服的地方。"
                   />
-                </label>
-                <div className="privacy-options">
-                  <span>這段內容：</span>
-                  <button
-                    className={visibility === "private_session" ? "selected" : ""}
-                    onClick={() => setVisibility("private_session")}
-                  >
-                    {visibility === "private_session" ? "●" : "○"} 只限本次
-                  </button>
-                  <button
-                    className={visibility === "private_remembered" ? "selected" : ""}
-                    onClick={() => setVisibility("private_remembered")}
-                  >
-                    {visibility === "private_remembered" ? "●" : "○"} 讓 AI 之後也記得
-                  </button>
-                  <button
-                    className={visibility === "shared" ? "selected" : ""}
-                    onClick={() => setVisibility("shared")}
-                  >
-                    {visibility === "shared" ? "●" : "○"} 可以讓另一半看到
-                  </button>
                 </div>
-                <label>
-                  <span>
-                    絕對不要 <small>Hard no</small>
-                  </span>
+
+                <div className="pref-block">
+                  <div className="block-head">
+                    <h4>這段內容可以怎麼用？</h4>
+                  </div>
+                  <div className="visibility-list" role="radiogroup">
+                    {VISIBILITY_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={visibility === opt.value}
+                        className={`visibility-option ${visibility === opt.value ? "selected" : ""}`}
+                        onClick={() => setVisibility(opt.value)}
+                      >
+                        <span className="vo-dot" />
+                        <span className="vo-text">
+                          <strong>{opt.label}</strong>
+                          <small>{opt.desc}</small>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pref-block hardno-block">
+                  <div className="block-head">
+                    <h4>絕對不要</h4>
+                    <small>AI 一定會避開</small>
+                  </div>
                   <input
                     className="field-input"
                     value={hardNo}
                     onChange={(e) => setHardNo(e.target.value)}
-                    placeholder="輸入不想去的類型，例如：火鍋、劇烈運動"
+                    placeholder="例如：火鍋、戶外、排隊名店、劇烈運動"
                   />
-                </label>
+                </div>
+
                 <button
                   className="btn btn-black wide"
                   onClick={submitPrivate}
