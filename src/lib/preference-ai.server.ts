@@ -11,7 +11,7 @@ export type PreferenceInput = {
   hardNo: string;
 };
 
-const MODEL = "gemini-2.5-flash";
+const MODEL = "gemini-3.6-flash";
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 const SYSTEM_PROMPT = `你是一個偏好結構化引擎，只負責把使用者的私密約會偏好整理成結構化資料。
