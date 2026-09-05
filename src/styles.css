@@ -250,12 +250,13 @@ textarea.field-input {
 }
 .hero-copy h1,
 .flow-header h1 {
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
   margin: 24px 0 20px;
-  font-size: clamp(38px, 6vw, 76px);
-  font-weight: 800;
-  line-height: 1.18;
+  font-size: clamp(37px, 5.8vw, 74px);
+  font-weight: 700;
+  line-height: 1.24;
 }
+
 .hero-copy h1 em,
 .flow-header h1 em {
   color: #fffaf4;
