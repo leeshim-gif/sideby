@@ -1,22 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Clock,
+  Footprints,
   Heart,
   Link2,
   Lock,
   MapPin,
+  Navigation,
   RefreshCw,
+  Route as RouteIcon,
   Share2,
   Sparkles,
+  Star,
+  TrainFront,
   Users,
 } from "lucide-react";
 import { AuthSheet } from "@/components/AuthSheet";
 import { ProfileMenu } from "@/components/ProfileMenu";
+import { DateMap, type MapStop } from "@/components/DateMap";
 import { useSession } from "@/lib/use-session";
+import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
