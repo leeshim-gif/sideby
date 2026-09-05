@@ -1909,3 +1909,26 @@ label small,
 }
 .place-preview-info small { font-size: 12px; opacity: 0.65; }
 .place-preview-info .venue-btn { align-self: flex-start; }
+
+.ai-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--peach) 45%, transparent);
+  font-size: 14px;
+}
+.ai-error .btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
