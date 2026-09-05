@@ -14,6 +14,9 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import { AuthSheet } from "@/components/AuthSheet";
+import { ProfileMenu } from "@/components/ProfileMenu";
+import { useSession } from "@/lib/use-session";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -148,6 +151,8 @@ function MapCard() {
 }
 
 function Home() {
+  const { user } = useSession();
+  const [authOpen, setAuthOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("room");
   const [role] = useState("A");
   const [inviteCode, setInviteCode] = useState("842716");
@@ -258,10 +263,20 @@ function Home() {
           <span className="status-dot" />
           雙人房間已開啟 <span className="code-pill">{inviteCode}</span>
         </div>
-        <button className="icon-btn" aria-label="房間成員">
-          <Users size={18} />
-        </button>
+        <div className="top-actions">
+          <button className="icon-btn" aria-label="房間成員">
+            <Users size={18} />
+          </button>
+          {user ? (
+            <ProfileMenu user={user} />
+          ) : (
+            <button className="btn btn-black login-btn" onClick={() => setAuthOpen(true)}>
+              登入
+            </button>
+          )}
+        </div>
       </header>
+      <AuthSheet open={authOpen} onClose={() => setAuthOpen(false)} />
 
       <main className="page-wrap">
         <div className="progress-row">
