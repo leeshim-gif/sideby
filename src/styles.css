@@ -1411,10 +1411,12 @@ label small,
     text-align: center;
     font-size: 11px;
   }
-  .lock-stop {
-    grid-column: 3;
-    justify-self: stretch;
-    align-self: stretch;
+  .plan-body {
+    min-width: 0;
+  }
+  .plan-title-row h3,
+  .mini-stop span {
+    overflow-wrap: anywhere;
   }
   .final-summary {
     justify-content: space-between;
