@@ -501,7 +501,7 @@ textarea.field-input {
 .flow-header p {
   font-size: 16px;
   font-weight: 600;
-  line-height: 1.65;
+  line-height: 1.85;
 }
 .form-layout,
 .private-layout,
@@ -607,20 +607,22 @@ label small,
   display: grid;
 }
 .side-note strong {
+  display: block;
   font-size: 20px;
 }
 .side-note p,
 .privacy-side p {
+  margin: 12px 0 0;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.9;
 }
 .share-button {
   justify-content: center;
   align-items: center;
   gap: 7px;
   width: 100%;
-  height: 42px;
-  margin-top: 22px;
+  height: 46px;
+  margin-top: 26px;
   font-size: 11px;
   display: flex;
   box-shadow: 3px 3px #111;
@@ -628,8 +630,8 @@ label small,
 .member-progress {
   border-top: 1.5px solid #111;
   gap: 12px;
-  margin-top: 25px;
-  padding-top: 15px;
+  margin-top: 30px;
+  padding-top: 19px;
   font-size: 12px;
   display: grid;
 }
@@ -1029,7 +1031,11 @@ label small,
   grid-template-columns: 45px 15px 1fr auto;
   gap: 12px;
   min-height: 84px;
+  padding: 8px 0;
   display: grid;
+}
+.stop-detail {
+  min-width: 0;
 }
 .time-col {
   padding-top: 2px;
@@ -1046,14 +1052,18 @@ label small,
 }
 .stop-detail h3 {
   letter-spacing: -0.03em;
-  margin: 4px 0 3px;
+  margin: 6px 0 6px;
   font-size: 17px;
   font-weight: 900;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 .stop-detail p {
   margin: 0;
   font-size: 11px;
   font-weight: 700;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
 }
 .stop-type {
   background: #e5ddd7;
@@ -1065,7 +1075,7 @@ label small,
   border-left: 1.5px dashed #111;
   align-items: center;
   height: 31px;
-  margin-top: 11px;
+  margin-top: 15px;
   padding-left: 12px;
   font-size: 10px;
   font-weight: 700;
@@ -1100,16 +1110,22 @@ label small,
 .final-summary {
   border-top: 1.5px solid #111;
   gap: 18px;
-  margin-top: 8px;
-  padding-top: 19px;
+  margin-top: 22px;
+  padding-top: 22px;
   display: flex;
 }
 .final-summary span {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
   font-size: 10px;
+  line-height: 1.6;
 }
 .final-summary strong {
+  margin-bottom: 4px;
   font-size: 14px;
   display: block;
+  overflow-wrap: anywhere;
 }
 .map-card {
   background: #71d7b1;
@@ -1202,8 +1218,8 @@ label small,
 }
 .final-actions {
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 27px;
+  gap: 14px;
+  margin-top: 36px;
 }
 .mobile-bottom {
   display: none;
@@ -1333,8 +1349,11 @@ label small,
   .form-card,
   .private-card,
   .card-surface {
-    padding: 20px;
+    padding: 22px;
     box-shadow: 4px 4px #111;
+  }
+  .flow-section {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
   .side-note,
   .privacy-side {
@@ -1381,12 +1400,23 @@ label small,
   .stop-actions {
     flex-direction: row;
     grid-column: 3;
-    margin-top: -6px;
+    gap: 8px;
+    margin-top: 10px;
   }
-  .lock-stop {
-    grid-column: 3;
-    justify-self: start;
-    margin-top: -10px;
+  .lock-stop,
+  .replace-stop {
+    flex: 1;
+    min-height: 34px;
+    padding: 6px 10px;
+    text-align: center;
+    font-size: 11px;
+  }
+  .plan-body {
+    min-width: 0;
+  }
+  .plan-title-row h3,
+  .mini-stop span {
+    overflow-wrap: anywhere;
   }
   .final-summary {
     justify-content: space-between;
@@ -1777,11 +1807,11 @@ label small,
   gap: 4px;
 }
 .venue-block {
-  margin-top: 10px;
+  margin-top: 12px;
   border: 1.5px solid #111;
   border-radius: 12px;
   background: #fffaf4;
-  padding: 10px;
+  padding: 14px;
   box-shadow: 3px 3px #111;
 }
 .venue-photo {
@@ -1822,16 +1852,18 @@ label small,
   background: #ffb9a3;
 }
 .venue-address {
-  margin: 7px 0 0;
+  margin: 9px 0 0;
   font-size: 11px;
   font-weight: 600;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
   opacity: 0.8;
 }
 .venue-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 9px;
+  gap: 8px;
+  margin-top: 12px;
 }
 .venue-btn {
   display: inline-flex;
