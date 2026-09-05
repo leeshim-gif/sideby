@@ -1,22 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Clock,
+  Footprints,
   Heart,
   Link2,
   Lock,
   MapPin,
+  Navigation,
   RefreshCw,
+  Route as RouteIcon,
   Share2,
   Sparkles,
+  Star,
+  TrainFront,
   Users,
 } from "lucide-react";
 import { AuthSheet } from "@/components/AuthSheet";
 import { ProfileMenu } from "@/components/ProfileMenu";
+import { DateMap, type MapStop } from "@/components/DateMap";
 import { useSession } from "@/lib/use-session";
+import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,7 +48,14 @@ export const Route = createFileRoute("/")({
 });
 
 type Screen = "room" | "shared" | "private" | "plans" | "final";
-type Stop = { time: string; name: string; type: string; meta: string; color: string };
+type Stop = {
+  time: string;
+  name: string;
+  type: string;
+  meta: string;
+  color: string;
+  query: string;
+};
 type Plan = {
   id: string;
   title: string;
@@ -61,10 +78,38 @@ const INITIAL_PLANS: Plan[] = [
     total: "NT$ 1,850",
     movement: "捷運＋步行 31 分鐘",
     stops: [
-      { time: "18:00", name: "中山站 4 號出口", type: "集合", meta: "相約碰面", color: "yellow" },
-      { time: "18:10", name: "Daylight Café", type: "咖啡廳", meta: "65 分鐘 · NT$520", color: "mint" },
-      { time: "19:30", name: "當代設計展", type: "展覽", meta: "70 分鐘 · NT$600", color: "lilac" },
-      { time: "21:00", name: "禾日定食", type: "晚餐", meta: "50 分鐘 · NT$730", color: "peach" },
+      {
+        time: "18:00",
+        name: "中山站 4 號出口",
+        type: "集合",
+        meta: "相約碰面",
+        color: "yellow",
+        query: "捷運中山站 台北",
+      },
+      {
+        time: "18:10",
+        name: "Fika Fika Cafe",
+        type: "咖啡廳",
+        meta: "65 分鐘 · NT$520",
+        color: "mint",
+        query: "Fika Fika Cafe 伊通街 台北",
+      },
+      {
+        time: "19:30",
+        name: "台北當代藝術館",
+        type: "展覽",
+        meta: "70 分鐘 · NT$600",
+        color: "lilac",
+        query: "台北當代藝術館",
+      },
+      {
+        time: "21:00",
+        name: "欣葉台菜 雙城店",
+        type: "晚餐",
+        meta: "50 分鐘 · NT$730",
+        color: "peach",
+        query: "欣葉台菜 雙城店 台北",
+      },
     ],
     reason: "把舒適、互動感與低移動距離放在同一條路線裡。",
   },
@@ -77,16 +122,38 @@ const INITIAL_PLANS: Plan[] = [
     total: "NT$ 2,080",
     movement: "捷運＋步行 24 分鐘",
     stops: [
-      { time: "18:00", name: "中山站 4 號出口", type: "集合", meta: "相約碰面", color: "yellow" },
+      {
+        time: "18:00",
+        name: "中山站 4 號出口",
+        type: "集合",
+        meta: "相約碰面",
+        color: "yellow",
+        query: "捷運中山站 台北",
+      },
       {
         time: "18:20",
-        name: "小日子手作所",
+        name: "日星鑄字行",
         type: "雙人手作",
         meta: "90 分鐘 · NT$1,000",
         color: "lilac",
+        query: "日星鑄字行 台北",
       },
-      { time: "20:05", name: "日常甜室", type: "甜點", meta: "45 分鐘 · NT$480", color: "mint" },
-      { time: "21:00", name: "赤峰街散步", type: "散步", meta: "40 分鐘 · NT$600", color: "peach" },
+      {
+        time: "20:05",
+        name: "Miss V Bakery",
+        type: "甜點",
+        meta: "45 分鐘 · NT$480",
+        color: "mint",
+        query: "Miss V Bakery 赤峰街 台北",
+      },
+      {
+        time: "21:00",
+        name: "赤峰街",
+        type: "散步",
+        meta: "40 分鐘 · NT$600",
+        color: "peach",
+        query: "赤峰街 大同區 台北",
+      },
     ],
     reason: "用一段共同完成的體驗，讓今晚多一點新鮮感與笑聲。",
   },
@@ -99,10 +166,38 @@ const INITIAL_PLANS: Plan[] = [
     total: "NT$ 1,560",
     movement: "步行為主 12 分鐘",
     stops: [
-      { time: "18:00", name: "中山站 4 號出口", type: "集合", meta: "相約碰面", color: "yellow" },
-      { time: "18:15", name: "留白書店咖啡", type: "咖啡廳", meta: "80 分鐘 · NT$560", color: "mint" },
-      { time: "19:45", name: "光井公園", type: "公園散步", meta: "35 分鐘 · 免費", color: "lilac" },
-      { time: "20:30", name: "禾日定食", type: "晚餐", meta: "55 分鐘 · NT$1,000", color: "peach" },
+      {
+        time: "18:00",
+        name: "中山站 4 號出口",
+        type: "集合",
+        meta: "相約碰面",
+        color: "yellow",
+        query: "捷運中山站 台北",
+      },
+      {
+        time: "18:15",
+        name: "Coffee Stand by me",
+        type: "咖啡廳",
+        meta: "80 分鐘 · NT$560",
+        color: "mint",
+        query: "Coffee Stand by me 赤峰街 台北",
+      },
+      {
+        time: "19:45",
+        name: "花博公園圓山園區",
+        type: "公園散步",
+        meta: "35 分鐘 · 免費",
+        color: "lilac",
+        query: "花博公園圓山園區 台北",
+      },
+      {
+        time: "20:30",
+        name: "雙連圓仔湯",
+        type: "晚餐",
+        meta: "55 分鐘 · NT$1,000",
+        color: "peach",
+        query: "雙連圓仔湯 台北",
+      },
     ],
     reason: "保留一點空白與舒服的節奏，適合今天不想趕行程的你們。",
   },
@@ -128,29 +223,73 @@ function FlowHeader({
   );
 }
 
-function MapCard() {
+
+function VenueDetails({ venue }: { venue: Venue }) {
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    venue.name,
+  )}&query_place_id=${venue.placeId}`;
+  const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+    venue.name,
+  )}&destination_place_id=${venue.placeId}&travelmode=transit`;
+
   return (
-    <aside className="map-card map-fallback">
-      <div className="fallback-grid" />
-      <div className="fallback-route">
-        <svg viewBox="0 0 400 430" preserveAspectRatio="none">
-          <path d="M52 320 C120 300 140 200 170 190 C210 176 240 230 262 236 C300 246 320 120 352 60" />
-        </svg>
+    <div className="venue-block">
+      {venue.photoUri && (
+        <img className="venue-photo" src={venue.photoUri} alt={`${venue.name} 實景照片`} loading="lazy" />
+      )}
+      <div className="venue-meta">
+        <span className="venue-name">{venue.name}</span>
+        {venue.category && <span className="venue-tag">{venue.category}</span>}
+        {typeof venue.rating === "number" && (
+          <span className="venue-tag">
+            <Star size={12} fill="currentColor" /> {venue.rating.toFixed(1)}
+            {venue.ratingCount ? `（${venue.ratingCount}）` : ""}
+          </span>
+        )}
+        {typeof venue.openNow === "boolean" && (
+          <span className={`venue-tag ${venue.openNow ? "open" : "closed"}`}>
+            <Clock size={12} /> {venue.openNow ? "營業中" : "目前休息"}
+          </span>
+        )}
       </div>
-      <span className="fallback-pin fp-one" />
-      <span className="fallback-pin fp-two" />
-      <span className="fallback-pin fp-three" />
-      <span className="fallback-pin fp-four" />
-      <div className="map-label">
-        <MapPin size={16} /> 中山・赤峰街區域
-        <br />
-        <small>站點間路線與交通時間參考</small>
+      {venue.address && <p className="venue-address">{venue.address}</p>}
+      <div className="venue-actions">
+        <a className="venue-btn" href={mapsUrl} target="_blank" rel="noreferrer">
+          <MapPin size={14} /> 在 Google 地圖開啟
+        </a>
+        <a className="venue-btn nav" href={navUrl} target="_blank" rel="noreferrer">
+          <Navigation size={14} /> 開始導航
+        </a>
       </div>
-    </aside>
+    </div>
+  );
+}
+
+function TravelChips({ leg }: { leg: TravelLeg | undefined }) {
+  if (!leg) return <div className="travel-line"><span>正在計算交通時間…</span></div>;
+  return (
+    <div className="travel-line">
+      {leg.walkMinutes && (
+        <span>
+          <Footprints size={13} /> 步行 {leg.walkMinutes} 分鐘
+        </span>
+      )}
+      {leg.transitMinutes && (
+        <span>
+          <TrainFront size={13} /> 捷運 {leg.transitMinutes} 分鐘
+        </span>
+      )}
+      {leg.distanceKm && (
+        <span>
+          <RouteIcon size={13} /> 距離 {leg.distanceKm} km
+        </span>
+      )}
+    </div>
   );
 }
 
 function Home() {
+
   const { user } = useSession();
   const [authOpen, setAuthOpen] = useState(false);
   const [screen, setScreen] = useState<Screen>("room");
@@ -183,7 +322,106 @@ function Home() {
     [plans, selectedPlanId],
   );
 
+  // ---- Real Google Places / Routes data for the selected itinerary ----
+  const lookupVenues = useServerFn(resolveVenues);
+  const lookupLegs = useServerFn(computeTravelLegs);
+  const [venues, setVenues] = useState<Record<string, Venue>>({});
+  const [legs, setLegs] = useState<TravelLeg[]>([]);
+  const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
+  const [originLabel, setOriginLabel] = useState("現在位置");
+  const [mapsError, setMapsError] = useState(false);
+
+  const askLocation = useCallback(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setOriginLabel("現在位置");
+      },
+      () => {
+        // Permission denied → fall back to the meeting point the couple chose.
+        setOrigin(null);
+        setOriginLabel(location);
+      },
+      { timeout: 8000 },
+    );
+  }, [location]);
+
+  const stopQueries = useMemo(
+    () => currentPlan.stops.map((s) => s.query).join("|"),
+    [currentPlan],
+  );
+
+  useEffect(() => {
+    if (screen !== "final" && screen !== "plans") return;
+    let cancelled = false;
+    const queries = stopQueries.split("|").filter(Boolean);
+    lookupVenues({ data: { queries } })
+      .then((res) => {
+        if (cancelled) return;
+        setVenues((prev) => {
+          const next = { ...prev };
+          res.venues.forEach((v) => {
+            next[v.query] = v;
+          });
+          return next;
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setMapsError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [screen, stopQueries, lookupVenues]);
+
+  const mapStops = useMemo<MapStop[]>(() => {
+    const list: MapStop[] = [];
+    if (origin)       list.push({
+        label: originLabel,
+        lat: origin.lat,
+        lng: origin.lng,
+        color: "yellow",
+        order: "◎",
+        isOrigin: true,
+      });
+    currentPlan.stops.forEach((stop, index) => {
+      const venue = venues[stop.query];
+      if (venue)
+        list.push({
+          label: venue.name,
+          lat: venue.lat,
+          lng: venue.lng,
+          color: stop.color,
+          order: index === 0 ? "◎" : String(index),
+        });
+    });
+    return list;
+  }, [currentPlan, venues, origin, originLabel]);
+
+  useEffect(() => {
+    if (screen !== "final" || mapStops.length < 2) return;
+    let cancelled = false;
+    lookupLegs({
+      data: { points: mapStops.map((s) => ({ label: s.label, lat: s.lat, lng: s.lng })) },
+    })
+      .then((res) => {
+        if (!cancelled) setLegs(res.legs);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [screen, mapStops, lookupLegs]);
+
+  useEffect(() => {
+    if (screen === "final") askLocation();
+  }, [screen, askLocation]);
+
+  const legFor = (index: number) => legs[origin ? index + 1 : index];
+
   const go = (next: Screen) => setScreen(next);
+
 
   const createRoom = () => {
     setInviteCode(String(Math.floor(100000 + Math.random() * 899999)));
@@ -233,8 +471,23 @@ function Home() {
   const replaceStop = (stop: Stop) => {
     const replacement: Stop =
       stop.type === "展覽"
-        ? { ...stop, name: "雙人手作體驗", type: "雙人手作", meta: "90 分鐘 · NT$880", color: "lilac" }
-        : { ...stop, name: "河岸散步", type: "散步", meta: "35 分鐘 · 免費", color: "mint" };
+        ? {
+            ...stop,
+            name: "陶作坊 台北",
+            type: "雙人手作",
+            meta: "90 分鐘 · NT$880",
+            color: "lilac",
+            query: "陶作坊 台北",
+          }
+        : {
+            ...stop,
+            name: "大稻埕碼頭",
+            type: "散步",
+            meta: "35 分鐘 · 免費",
+            color: "mint",
+            query: "大稻埕碼頭 台北",
+          };
+
     setPlans((prev) =>
       prev.map((p) =>
         p.id !== selectedPlanId
@@ -695,37 +948,55 @@ function Home() {
                     <small>適合度</small>
                   </span>
                 </div>
-                {currentPlan.stops.map((stop, index) => (
-                  <div className="timeline-row" key={stop.name}>
-                    <div className="time-col">{stop.time}</div>
-                    <div className={`timeline-dot ${stop.color}`} />
+                {origin && (
+                  <div className="timeline-row origin-row">
+                    <div className="time-col">現在</div>
+                    <div className="timeline-dot yellow" />
                     <div className="stop-detail">
                       <div>
-                        <span className="stop-type">{stop.type}</span>
-                        <h3>{stop.name}</h3>
-                        <p>{stop.meta}</p>
+                        <span className="stop-type">出發點</span>
+                        <h3>{originLabel}</h3>
+                        <p>已使用你目前的位置作為起點</p>
                       </div>
-                      {index < currentPlan.stops.length - 1 && (
-                        <div className="travel-line">
-                          <span>步行 {index === 0 ? 6 : 8} 分鐘</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="stop-actions">
-                      <button
-                        className={`lock-stop ${lockedStops.includes(stop.name) ? "locked" : ""}`}
-                        onClick={() => toggleLock(stop)}
-                      >
-                        {lockedStops.includes(stop.name) ? "已鎖定" : "鎖定這站"}
-                      </button>
-                      {!lockedStops.includes(stop.name) && index > 0 && (
-                        <button className="replace-stop" onClick={() => replaceStop(stop)}>
-                          替換
-                        </button>
-                      )}
+                      <TravelChips leg={legs[0]} />
                     </div>
                   </div>
-                ))}
+                )}
+                {currentPlan.stops.map((stop, index) => {
+                  const venue = venues[stop.query];
+                  return (
+                    <div className="timeline-row" key={stop.name}>
+                      <div className="time-col">{stop.time}</div>
+                      <div className={`timeline-dot ${stop.color}`}>
+                        <span>{index === 0 ? "◎" : index}</span>
+                      </div>
+                      <div className="stop-detail">
+                        <div>
+                          <span className="stop-type">{stop.type}</span>
+                          <h3>{venue?.name ?? stop.name}</h3>
+                          <p>{stop.meta}</p>
+                        </div>
+                        {venue && <VenueDetails venue={venue} />}
+                        {index < currentPlan.stops.length - 1 && (
+                          <TravelChips leg={legFor(index)} />
+                        )}
+                      </div>
+                      <div className="stop-actions">
+                        <button
+                          className={`lock-stop ${lockedStops.includes(stop.name) ? "locked" : ""}`}
+                          onClick={() => toggleLock(stop)}
+                        >
+                          {lockedStops.includes(stop.name) ? "已鎖定" : "鎖定這站"}
+                        </button>
+                        {!lockedStops.includes(stop.name) && index > 0 && (
+                          <button className="replace-stop" onClick={() => replaceStop(stop)}>
+                            替換
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
                 <div className="final-summary">
                   <span>
                     <strong>3 小時 55 分</strong>總時間
@@ -737,9 +1008,13 @@ function Home() {
                     <strong>捷運＋步行</strong>交通
                   </span>
                 </div>
+                {mapsError && (
+                  <p className="venue-address">實際場館資料暫時取不到，稍後會自動重試。</p>
+                )}
               </div>
-              <MapCard />
+              <DateMap stops={mapStops} />
             </div>
+
             <div className="final-actions">
               <button
                 className="btn btn-black"
