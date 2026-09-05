@@ -2029,3 +2029,249 @@ label small,
   align-items: center;
   gap: 6px;
 }
+
+/* SideBy wordmark — Iansui (SIL Open Font License 1.1, see public/fonts/Iansui-OFL.txt) */
+@font-face {
+  font-family: "Iansui";
+  src: url("/fonts/Iansui-Wordmark.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+.brand-word {
+  font-family: "Iansui", "DM Sans", "Noto Sans TC", sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-size: 1.12em;
+  line-height: 1;
+}
+
+/* ---- personal centre ---- */
+.account-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+  background: var(--background);
+}
+.account-page {
+  min-height: 100vh;
+  background: var(--background);
+  overflow-x: hidden;
+}
+.account-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 68px;
+  padding: 0 clamp(16px, 4vw, 32px);
+  background: var(--background);
+  border-bottom: 2px solid #111;
+}
+.account-top-title {
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+.account-top-spacer {
+  width: 36px;
+}
+.account-main {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 18px clamp(14px, 4vw, 24px) 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.account-card {
+  background: #fffaf4;
+  border: 2px solid #111;
+  border-radius: 22px;
+  box-shadow: 5px 5px 0 #111;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.account-card.hero {
+  background: #fef0e6;
+}
+.account-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.account-eyebrow {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.account-hero-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.account-hero-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.account-hero-text strong {
+  font-size: 20px;
+  letter-spacing: -0.03em;
+}
+.account-hero-text small,
+.account-row small {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+.pair-badge {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border: 1.5px solid #111;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+.pair-badge.on {
+  background: #71d7b1;
+}
+.account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1.5px solid #111;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+}
+.account-row > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.account-row.static {
+  background: #fffdf9;
+}
+.account-row.static div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.account-row.quiet {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 11px 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  border-bottom: 1px dashed rgba(17, 17, 17, 0.18);
+}
+.quiet-card {
+  box-shadow: none;
+  background: #fffdf9;
+  gap: 0;
+}
+.quiet-card .account-row.quiet:last-child {
+  border-bottom: 0;
+}
+.account-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px 14px;
+  border: 1.5px dashed #111;
+  border-radius: 14px;
+  background: #fffdf9;
+}
+.account-empty strong {
+  font-size: 15px;
+}
+.account-empty span,
+.account-note {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.account-note.quiet {
+  margin: 0;
+  font-size: 12px;
+}
+.account-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.account-edit label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 800;
+}
+.account-edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.account-danger {
+  margin-top: 14px;
+  padding: 18px 16px;
+  border: 2px dashed #c2402c;
+  border-radius: 22px;
+  background: #fff5f2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.account-danger strong {
+  color: #c2402c;
+  font-size: 16px;
+}
+.account-danger p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.btn-danger {
+  background: #c2402c;
+  color: #fffaf4;
+  border: 2px solid #111;
+  border-radius: 999px;
+  height: 44px;
+  font-weight: 800;
+  box-shadow: 3px 3px 0 #111;
+}
+.soon-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+  max-width: 340px;
+}
+.soon-sheet p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted-foreground);
+}

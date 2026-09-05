@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -25,7 +25,6 @@ import {
 
 } from "lucide-react";
 import { AuthSheet } from "@/components/AuthSheet";
-import { ProfileMenu } from "@/components/ProfileMenu";
 import { DateMap, type MapStop } from "@/components/DateMap";
 import { DateSheet, TimeSheet, formatDateLabel } from "@/components/DateSheet";
 import { PlaceField } from "@/components/PlaceField";
@@ -616,7 +615,7 @@ function Home() {
       <header className="topbar">
         <div className="brand">
           <span className="brand-mark">✦</span>
-          <span>SideBy</span>
+          <span className="brand-word">SideBy</span>
         </div>
         <div className="top-status">
           <span className="status-dot" />
@@ -627,7 +626,9 @@ function Home() {
             <Users size={18} />
           </button>
           {user ? (
-            <ProfileMenu user={user} />
+            <Link to="/account" className="avatar-btn" aria-label="個人中心">
+              {(user.email ?? "?").trim().charAt(0).toUpperCase()}
+            </Link>
           ) : (
             <button className="btn btn-black login-btn" onClick={() => setAuthOpen(true)}>
               登入
