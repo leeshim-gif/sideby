@@ -619,8 +619,14 @@ function Home() {
         </div>
         <div className="top-status">
           <span className="status-dot" />
-          雙人房間已開啟 <span className="code-pill">{inviteCode}</span>
+          {room
+            ? room.memberCount >= 2
+              ? "兩個人的空間"
+              : "等另一半加入"
+            : "還沒有共同空間"}
+          {room && <span className="code-pill">{room.inviteCode}</span>}
         </div>
+
         <div className="top-actions">
           <button className="icon-btn" aria-label="房間成員">
             <Users size={18} />
