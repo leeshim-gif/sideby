@@ -20,6 +20,9 @@ import {
   Star,
   TrainFront,
   Users,
+  X,
+  CalendarDays,
+
 } from "lucide-react";
 import { AuthSheet } from "@/components/AuthSheet";
 import { ProfileMenu } from "@/components/ProfileMenu";
