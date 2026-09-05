@@ -32,6 +32,9 @@ import { PlaceField } from "@/components/PlaceField";
 
 import { useSession } from "@/lib/use-session";
 import { computeTravelLegs, resolveVenues, type TravelLeg, type Venue } from "@/lib/maps.functions";
+import { analyzePreferenceInput } from "@/lib/preferences.functions";
+import type { PreferenceProfile } from "@/lib/preference-types";
+
 
 
 export const Route = createFileRoute("/")({
@@ -330,6 +333,10 @@ function Home() {
   const [rawText, setRawText] = useState("");
   const [hardNo, setHardNo] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [aiError, setAiError] = useState(false);
+  const [preferenceProfile, setPreferenceProfile] = useState<PreferenceProfile | null>(null);
+  const runPreferenceAnalysis = useServerFn(analyzePreferenceInput);
+
 
   const [selectedPlanId, setSelectedPlanId] = useState("A");
   const [lockedStops, setLockedStops] = useState<string[]>([]);
@@ -477,15 +484,24 @@ function Home() {
     }
   };
 
-  const submitPrivate = () => {
+  const submitPrivate = async () => {
     setGenerating(true);
-    setTimeout(() => {
-      setGenerating(false);
+    setAiError(false);
+    try {
+      const result = await runPreferenceAnalysis({
+        data: { moods, freeText: rawText, hardNo, visibility },
+      });
+      setPreferenceProfile(result.profile);
       setPartnerJoined(true);
       toast.success("AI 已完成新一輪配對");
       go("plans");
-    }, 1800);
+    } catch {
+      setAiError(true);
+    } finally {
+      setGenerating(false);
+    }
   };
+
 
   const toggleLock = (stop: Stop) => {
     const locked = lockedStops.includes(stop.name);
@@ -894,7 +910,7 @@ function Home() {
                 >
                   {generating ? (
                     <>
-                      <RefreshCw className="spin" size={17} /> AI 正在整理你們的默契…
+                      <RefreshCw className="spin" size={17} /> AI 正在理解你的偏好…
                     </>
                   ) : (
                     <>
@@ -902,6 +918,15 @@ function Home() {
                     </>
                   )}
                 </button>
+                {aiError && (
+                  <div className="ai-error">
+                    <span>AI 暫時無法分析，再試一次。</span>
+                    <button className="btn btn-ghost" onClick={submitPrivate} disabled={generating}>
+                      <RefreshCw size={15} /> 再試一次
+                    </button>
+                  </div>
+                )}
+
               </div>
               <div className="privacy-side">
                 <div className="privacy-lock">
