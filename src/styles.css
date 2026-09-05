@@ -26,11 +26,11 @@ body,
 body {
   background: var(--background);
   color: var(--foreground);
-  /* Chinese resolves to Iansui (CJK unicode-range); Latin/digits stay on DM Sans */
-  font-family: "Iansui", "DM Sans", "Noto Sans TC", sans-serif;
-  font-weight: 600;
-  line-height: 1.6;
-  letter-spacing: 0.005em;
+  /* Chinese resolves to jf open 粉圓 (CJK unicode-range); Latin/digits stay on DM Sans */
+  font-family: "jf-openhuninn", "DM Sans", "Noto Sans TC", sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
   font-synthesis: weight style;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -39,25 +39,26 @@ h1,
 h2,
 h3,
 h4 {
-  font-weight: 800;
-  line-height: 1.28;
+  font-weight: 600;
+  line-height: 1.34;
 }
 label,
 .btn,
 button,
 select,
 .account-eyebrow {
-  font-weight: 700;
+  font-weight: 500;
 }
 input,
 textarea {
-  font-weight: 600;
+  font-weight: 400;
 }
 input::placeholder,
 textarea::placeholder {
-  font-weight: 600;
-  opacity: 0.72;
+  font-weight: 400;
+  opacity: 0.7;
 }
+
 
 button,
 input,
