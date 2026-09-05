@@ -1552,3 +1552,150 @@ label small,
     height: 36px;
   }
 }
+
+/* ---------- Live Google Map + real venue details ---------- */
+.live-map {
+  background: #f7f1ea;
+  min-height: 430px;
+  position: sticky;
+  top: 18px;
+}
+.map-canvas {
+  position: absolute;
+  inset: 0;
+}
+.map-status {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fffaf4;
+  border: 1.5px solid #111;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.timeline-dot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  background: #fffaf4;
+}
+.timeline-dot span {
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+.timeline-dot.mint {
+  background: #8fe0c8;
+}
+.timeline-dot.lilac {
+  background: #c9bdf5;
+}
+.timeline-dot.yellow {
+  background: #ffd75e;
+}
+.timeline-dot.peach {
+  background: #ffb9a3;
+}
+.travel-line {
+  height: auto;
+  min-height: 31px;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  padding: 6px 0 6px 12px;
+}
+.travel-line span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.venue-block {
+  margin-top: 10px;
+  border: 1.5px solid #111;
+  border-radius: 12px;
+  background: #fffaf4;
+  padding: 10px;
+  box-shadow: 3px 3px #111;
+}
+.venue-photo {
+  width: 100%;
+  height: 128px;
+  object-fit: cover;
+  border: 1.5px solid #111;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: block;
+}
+.venue-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.venue-name {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.venue-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #e5ddd7;
+  border: 1px solid #111;
+  border-radius: 20px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.venue-tag.open {
+  background: #8fe0c8;
+}
+.venue-tag.closed {
+  background: #ffb9a3;
+}
+.venue-address {
+  margin: 7px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+.venue-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+.venue-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #111;
+  color: #fffaf4;
+  border: 1.5px solid #111;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.venue-btn.nav {
+  background: #ffd75e;
+  color: #111;
+}
+.origin-row .stop-detail h3 {
+  font-size: 15px;
+}
+@media (max-width: 860px) {
+  .live-map {
+    position: relative;
+    top: 0;
+    min-height: 300px;
+  }
+}
