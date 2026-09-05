@@ -40,13 +40,13 @@ import type { PreferenceProfile } from "@/lib/preference-types";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "默契出發｜兩個人的約會共決策" },
+      { title: "SideBy｜兩個人的約會共決策" },
       {
         name: "description",
         content:
           "不必為了「去哪裡」來回討論。說出你們想要的感覺，讓 AI 把兩個人的想法排成一條今晚剛剛好的路線。",
       },
-      { property: "og:title", content: "默契出發｜兩個人的約會共決策" },
+      { property: "og:title", content: "SideBy｜兩個人的約會共決策" },
       {
         property: "og:description",
         content: "建立雙人房間、分別輸入感受，AI 產出 3 種完整約會路線。",
@@ -556,7 +556,7 @@ function Home() {
       <header className="topbar">
         <div className="brand">
           <span className="brand-mark">✦</span>
-          <span>默契出發</span>
+          <span>SideBy</span>
         </div>
         <div className="top-status">
           <span className="status-dot" />

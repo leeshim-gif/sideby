@@ -91,7 +91,7 @@ export function AuthSheet({ open, onClose }: { open: boolean; onClose: () => voi
     onClose();
   };
 
-  const title = mode === "signup" ? "建立你的帳號" : mode === "forgot" ? "重設密碼" : "登入 PairPath";
+  const title = mode === "signup" ? "建立你的帳號" : mode === "forgot" ? "重設密碼" : "登入 SideBy";
   const lede =
     mode === "signup"
       ? "註冊後就能保存你們的約會紀錄與伴侶設定。"
@@ -105,7 +105,7 @@ export function AuthSheet({ open, onClose }: { open: boolean; onClose: () => voi
         <button className="auth-close" onClick={onClose} aria-label="關閉">
           <X size={17} />
         </button>
-        <span className="eyebrow">PAIRPATH ACCOUNT</span>
+        <span className="eyebrow">SIDEBY ACCOUNT</span>
         <h2 className="auth-title">{title}</h2>
         <p className="auth-lede">{lede}</p>
 
