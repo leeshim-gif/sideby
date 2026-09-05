@@ -330,6 +330,10 @@ function Home() {
   const [rawText, setRawText] = useState("");
   const [hardNo, setHardNo] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [aiError, setAiError] = useState(false);
+  const [preferenceProfile, setPreferenceProfile] = useState<PreferenceProfile | null>(null);
+  const runPreferenceAnalysis = useServerFn(analyzePreferenceInput);
+
 
   const [selectedPlanId, setSelectedPlanId] = useState("A");
   const [lockedStops, setLockedStops] = useState<string[]>([]);
