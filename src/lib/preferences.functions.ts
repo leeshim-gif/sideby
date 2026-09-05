@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import type { PreferenceProfile } from "./preference-ai.server";
+import type { PreferenceProfile } from "./preference-types";
 
 const Input = z.object({
   moods: z.array(z.string().min(1)).max(20).default([]),

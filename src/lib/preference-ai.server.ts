@@ -2,18 +2,8 @@
 // Isolated + modular: swap `analyzeWithGemini` for another provider without
 // touching callers. The API key never leaves the server.
 
-export type PreferenceProfile = {
-  moods: string[];
-  preferred_place_types: string[];
-  preferred_activities: string[];
-  soft_preferences: string[];
-  hard_exclusions: string[];
-  energy_level: "low" | "medium" | "high" | "unspecified";
-  walking_preference: "low" | "medium" | "high" | "unspecified";
-  indoor_outdoor: "indoor" | "outdoor" | "either" | "unspecified";
-  food_preferences: string[];
-  other_constraints: string[];
-};
+import type { PreferenceProfile } from "./preference-types";
+export type { PreferenceProfile };
 
 export type PreferenceInput = {
   moods: string[];
