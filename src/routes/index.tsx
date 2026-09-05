@@ -377,10 +377,24 @@ function Home() {
 
   const mapStops = useMemo<MapStop[]>(() => {
     const list: MapStop[] = [];
-    if (origin) list.push({ label: originLabel, lat: origin.lat, lng: origin.lng, color: "yellow", isOrigin: true });
-    currentPlan.stops.forEach((stop) => {
+    if (origin)       list.push({
+        label: originLabel,
+        lat: origin.lat,
+        lng: origin.lng,
+        color: "yellow",
+        order: "◎",
+        isOrigin: true,
+      });
+    currentPlan.stops.forEach((stop, index) => {
       const venue = venues[stop.query];
-      if (venue) list.push({ label: venue.name, lat: venue.lat, lng: venue.lng, color: stop.color });
+      if (venue)
+        list.push({
+          label: venue.name,
+          lat: venue.lat,
+          lng: venue.lng,
+          color: stop.color,
+          order: index === 0 ? "◎" : String(index),
+        });
     });
     return list;
   }, [currentPlan, venues, origin, originLabel]);
@@ -954,7 +968,7 @@ function Home() {
                     <div className="timeline-row" key={stop.name}>
                       <div className="time-col">{stop.time}</div>
                       <div className={`timeline-dot ${stop.color}`}>
-                        <span>{index}</span>
+                        <span>{index === 0 ? "◎" : index}</span>
                       </div>
                       <div className="stop-detail">
                         <div>

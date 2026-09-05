@@ -7,6 +7,7 @@ export type MapStop = {
   lat: number;
   lng: number;
   color: string;
+  order: string;
   isOrigin?: boolean;
 };
 
@@ -59,7 +60,7 @@ export function DateMap({ stops }: { stops: MapStop[] }) {
               strokeWeight: 2,
             },
             label: {
-              text: stop.isOrigin ? "◎" : String(index),
+              text: stop.order,
               color: "#151515",
               fontSize: "12px",
               fontWeight: "700",
