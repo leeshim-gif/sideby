@@ -442,6 +442,16 @@ function Home() {
 
   const go = (next: Screen) => setScreen(next);
 
+  const draftDirty = location.trim().length > 0 || meetPlace !== null;
+  const requestLeave = () => {
+    if (draftDirty) {
+      setLeaveAsk(true);
+      return;
+    }
+    go("room");
+  };
+
+
 
   const createRoom = () => {
     setInviteCode(String(Math.floor(100000 + Math.random() * 899999)));
