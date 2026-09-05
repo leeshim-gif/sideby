@@ -26,11 +26,11 @@ body,
 body {
   background: var(--background);
   color: var(--foreground);
-  /* Chinese resolves to Iansui (CJK unicode-range); Latin/digits stay on DM Sans */
-  font-family: "Iansui", "DM Sans", "Noto Sans TC", sans-serif;
-  font-weight: 600;
-  line-height: 1.6;
-  letter-spacing: 0.005em;
+  /* Chinese resolves to jf open 粉圓 (CJK unicode-range); Latin/digits stay on DM Sans */
+  font-family: "jf-openhuninn", "DM Sans", "Noto Sans TC", sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
   font-synthesis: weight style;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -39,25 +39,26 @@ h1,
 h2,
 h3,
 h4 {
-  font-weight: 800;
-  line-height: 1.28;
+  font-weight: 600;
+  line-height: 1.34;
 }
 label,
 .btn,
 button,
 select,
 .account-eyebrow {
-  font-weight: 700;
+  font-weight: 500;
 }
 input,
 textarea {
-  font-weight: 600;
+  font-weight: 400;
 }
 input::placeholder,
 textarea::placeholder {
-  font-weight: 600;
-  opacity: 0.72;
+  font-weight: 400;
+  opacity: 0.7;
 }
+
 
 button,
 input,
@@ -249,12 +250,13 @@ textarea.field-input {
 }
 .hero-copy h1,
 .flow-header h1 {
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
   margin: 24px 0 20px;
-  font-size: clamp(38px, 6vw, 76px);
-  font-weight: 800;
-  line-height: 1.18;
+  font-size: clamp(37px, 5.8vw, 74px);
+  font-weight: 700;
+  line-height: 1.24;
 }
+
 .hero-copy h1 em,
 .flow-header h1 em {
   color: #fffaf4;
@@ -1258,8 +1260,9 @@ label small,
     padding: 20px 3% 43px;
   }
   .hero-copy h1 {
-    font-size: 38px;
+    font-size: 34px;
   }
+
   .hero-lede {
     font-size: 15px;
   }
@@ -2066,10 +2069,11 @@ label small,
   gap: 6px;
 }
 
-/* Iansui by ButTaiwan — SIL Open Font License 1.1 (public/fonts/Iansui-OFL.txt) */
+/* jf open 粉圓 (open-huninn) by justfont — SIL Open Font License 1.1
+   (public/fonts/jf-openhuninn-OFL.txt) */
 @font-face {
-  font-family: "Iansui";
-  src: url("/fonts/Iansui-Regular.woff2") format("woff2");
+  font-family: "jf-openhuninn";
+  src: url("/fonts/jf-openhuninn-2.1.woff2") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -2077,20 +2081,13 @@ label small,
   unicode-range: U+2E80-303F, U+3040-30FF, U+3190-319F, U+31C0-31EF, U+3200-4DBF,
     U+4E00-9FFF, U+F900-FAFF, U+FE30-FE4F, U+FF00-FFEF, U+20000-2FA1F;
 }
-@font-face {
-  font-family: "IansuiAll";
-  src: url("/fonts/Iansui-Regular.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
 .brand-word {
-  font-family: "IansuiAll", "DM Sans", sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  font-size: 1.1em;
+  letter-spacing: -0.02em;
   line-height: 1.05;
 }
+
 
 
 /* ---- personal centre ---- */
